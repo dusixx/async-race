@@ -1,5 +1,5 @@
 {
-  "name": "decision-making-tool",
+  "name": "async-race",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && npx gh-pages -d dist -e decision-making-tool",
+    "deploy": "npm run build && npx gh-pages -d dist -e async-race",
     "format": "npx prettier . --write --list-different --ignore-unknown",
     "ci:format": "npx prettier . --check --list-different --ignore-unknown",
     "lint": "eslint ./src",
@@ -15,7 +15,7 @@
     "stylelint": "stylelint \"**/*.{css,scss}\"",
     "stylelint:fix": "stylelint \"**/*.{css,scss}\" --fix",
     "lint:fix-all": "(npm run stylelint:fix) || true && npm run lint:fix",
-    "prepare": "cd .. && husky ./decision-making-tool/.husky",
+    "prepare": "cd .. && husky ./async-race/.husky",
     "test": "echo 'hello' && exit 1",
     "commit": "git-cz"
   },
