@@ -1,0 +1,62 @@
+{
+  "name": "decision-making-tool",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && npx gh-pages -d dist -e decision-making-tool",
+    "format": "npx prettier . --write --list-different --ignore-unknown",
+    "ci:format": "npx prettier . --check --list-different --ignore-unknown",
+    "lint": "eslint ./src",
+    "lint:fix": "npm run lint --fix",
+    "stylelint": "stylelint \"**/*.{css,scss}\"",
+    "stylelint:fix": "stylelint \"**/*.{css,scss}\" --fix",
+    "lint:fix-all": "(npm run stylelint:fix) || true && npm run lint:fix",
+    "prepare": "cd .. && husky ./decision-making-tool/.husky",
+    "test": "echo 'hello' && exit 1",
+    "commit": "git-cz"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/prompt"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@commitlint/prompt": "^19.8.0",
+    "@eslint/js": "^9.22.0",
+    "commitizen": "^4.3.1",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-config-stylelint": "^23.0.0",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-unicorn": "^57.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.5.3",
+    "sass": "^1.85.1",
+    "stylelint": "^16.15.0",
+    "stylelint-config-clean-order": "^7.0.0",
+    "stylelint-config-prettier-scss": "^1.0.0",
+    "stylelint-config-standard": "^37.0.0",
+    "stylelint-config-standard-scss": "^14.0.0",
+    "stylelint-prettier": "^5.0.3",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.26.1",
+    "vite": "^6.2.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "dependencies": {
+    "gh-pages": "^6.3.0",
+    "typescript-tslint-plugin": "^1.0.2"
+  }
+}

@@ -1,0 +1,48 @@
+body {
+  overflow-y: scroll;
+
+  margin: 0;
+
+  font-family: Nunito, sans-serif;
+  color: var(--color-text);
+
+  background-color: var(--color-bg);
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+input[type='number'] {
+  appearance: textfield;
+}
+
+p {
+  margin: 0;
+}
+
+:root {
+  --color-text: rgb(53 53 53);
+  --color-bg: rgb(235 235 235 / 90%);
+  --color-bg-sec: rgb(232 233 238);
+  --color-bg-sec-60: rgb(232 233 238 / 60%);
+  --color-modal-bg: rgb(246 246 246);
+  --color-accent: rgb(206 20 104);
+  --color-accent-20: rgb(206 20 104 / 20%);
+  --color-invalid-bg: rgb(255 243 248);
+  --color-backdrop-bg: rgb(89 89 89 / 50%);
+  --color-btn-bg: rgb(9 96 218);
+  --color-btn: white;
+  --color-border: rgb(219 219 219 / 60%);
+  --color-border-active: rgb(78 169 255);
+  --color-picked-option-bg: #e6f9d3;
+  --box-shaddow: 0 1px 1px 1px rgb(203 203 203/ 70%);
+  --border-radius: 20px;
+  --border-radius-sm: 6px;
+  --max-width: 1280px;
+  --wrapper-max-width: 750px;
+  --wrapper-min-width: 300px;
+  --backdrop-zindex: 1000;
+}

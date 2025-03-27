@@ -1,0 +1,21 @@
+.wrapper {
+  @extend %wrapper;
+
+  gap: 20px;
+
+  width: 400px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+
+  background-color: white;
+}
+
+.btn {
+  @extend %btn-primary;
+}
+
+.para {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+}
