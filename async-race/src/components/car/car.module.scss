@@ -1,0 +1,26 @@
+.container {
+  --animation-duration: 0.1s;
+
+  position: relative;
+  min-width: 60px;
+  max-width: 150px;
+}
+
+.car-image {
+  width: 100%;
+}
+
+.wheel {
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.spin {
+  animation: spin var(--animation-duration) linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
