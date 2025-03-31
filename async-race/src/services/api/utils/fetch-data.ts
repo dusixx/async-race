@@ -20,7 +20,7 @@ export async function fetchData(
   endpoint: string,
   queryParameters?: QueryParameters | null,
   init?: RequestInit
-): Promise<Response> {
+): Promise<Response | null> {
   let url = `${BASE_URL}/${endpoint}`;
 
   if (queryParameters) {

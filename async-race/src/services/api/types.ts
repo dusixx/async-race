@@ -8,6 +8,10 @@ export enum CarEngineStatus {
   Drive = 'drive',
 }
 
+export type CarDriveStatusType = 'finished' | 'broken';
+
+export type CarEngineStatusType = `${CarEngineStatus}`;
+
 export type CarVelocityAndDistance = {
   velocity: number;
   distance: number;
