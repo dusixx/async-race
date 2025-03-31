@@ -1,0 +1,56 @@
+.track {
+  position: relative;
+
+  overflow: hidden;
+  display: flex;
+
+  height: 200px;
+  border-radius: var(--border-radius);
+
+  background: linear-gradient(rgb(44 44 46), rgb(0 0 0));
+}
+
+.car-position {
+  position: absolute;
+  bottom: 5px;
+  left: var(--car-left);
+}
+
+.button {
+  @extend %btn-primary;
+
+  aspect-ratio: 1.1;
+  width: 30px;
+  border-radius: var(--border-radius-sm);
+
+  svg {
+    aspect-ratio: 1;
+    width: 17px;
+    fill: currentcolor;
+  }
+}
+
+.button-start {
+  background-color: var(--color-accent);
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.car-name {
+  display: flex;
+  font-size: 14px;
+  color: rgb(255 255 255 / 80%);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  height: fit-content;
+  margin-top: 20px;
+  margin-left: 20px;
+}
