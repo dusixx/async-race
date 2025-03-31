@@ -1,13 +1,9 @@
-.container {
-  --animation-duration: 0.1s;
-
-  position: relative;
-  min-width: 60px;
-  max-width: 150px;
+.wrapper {
+  width: max-content;
 }
 
 .car-image {
-  width: 100%;
+  width: 160px;
 }
 
 .wheel {
@@ -15,12 +11,12 @@
   transform-box: fill-box;
 }
 
-.spin {
-  animation: spin var(--animation-duration) linear infinite;
-}
+// .spin {
+//   animation: spin var(--wheel-spin-duration) linear infinite;
+// }
 
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
-}
+// @keyframes spin {
+//   100% {
+//     transform: rotate(360deg);
+//   }
+// }
