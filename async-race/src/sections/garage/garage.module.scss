@@ -1,0 +1,38 @@
+.wrapper {
+  @extend %wrapper;
+}
+
+.button {
+  @extend %btn-primary;
+}
+
+.race {
+  background-color: var(--color-accent);
+}
+
+.tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.left-controls,
+.right-controls {
+  display: flex;
+  gap: 15px;
+}
+
+.paginator {
+  display: flex;
+}
+
+.paginator-counter {
+  display: flex;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 20px;
+}
