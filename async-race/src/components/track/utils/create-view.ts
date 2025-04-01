@@ -26,7 +26,10 @@ const createButtonsWrapper = (): {
 
     const button = new Button({ className: styles.button, title: name, id: name });
     if (name === buttonsData.start) {
-      button.toggleClass(styles.buttonStart);
+      button.toggleClass(styles.start);
+    }
+    if (name === buttonsData.stop) {
+      button.toggleClass(styles.stop);
     }
     button.node.append(icon.node);
     buttonsMap[name] = button;
@@ -46,7 +49,7 @@ export const createView = (): {
 } => {
   const { buttonsWrapper, buttonsMap } = createButtonsWrapper();
   const carName = span({ className: styles.carName });
-  const headerWrapper = div({ className: styles.header }, carName, buttonsWrapper);
+  const headerWrapper = div({ className: styles.header }, buttonsWrapper, carName);
 
   return { buttonsMap, carName, headerWrapper };
 };
