@@ -1,4 +1,4 @@
-export const brands = [
+export default [
   {
     brand: 'Seat',
     models: [
