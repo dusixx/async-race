@@ -22,3 +22,19 @@ export type CarData = {
   color: string;
   id: number;
 };
+
+export type AllCarsData = {
+  items: CarData[];
+  totalCount: number;
+};
+
+export type WinnerData = {
+  id: number;
+  wins: number;
+  time: number;
+};
+
+export type AllWinnersData = {
+  items: WinnerData[];
+  totalCount: number;
+};
