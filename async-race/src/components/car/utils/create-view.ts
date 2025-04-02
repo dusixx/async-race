@@ -1,22 +1,26 @@
-import carSVGMarkup from './car-markup.ts';
+import bear from '../../../data/cars/bear.ts';
+import fox from '../../../data/cars/fox.ts';
+import monkey from '../../../data/cars/monkey.ts';
+import pig from '../../../data/cars/pig.ts';
 
+import { rndInt } from '../../../utils/misc.ts';
 import { div } from '../../base/tags.ts';
 import styles from '../car.module.scss';
 
-export enum CssVariableColor {
-  Body = '--color7',
-  Stroke = '--color1',
-  Halftone = '--color4',
+const CAR_SHADOW_OPACITY = '0.5';
+
+export enum ColorCSSVariableName {
+  Body = '--color-body',
 }
 
-const STROKE_COLOR = '#000';
-const HALFTONES_COLOR = '#5d667d'; // windshield etc.
-
-const LEFT_WHEEL_SELECTOR = '#left-wheel';
-const RIGHT_WHEEL_SELECTOR = '#right-wheel';
+enum CarViewSelector {
+  LeftWheel = '#left-wheel',
+  RightWheel = '#right-wheel',
+  Shadow = '#shadow',
+}
 
 const ERR_WHEEL_ELEMENT_NOT_FOUND = `
-  '${LEFT_WHEEL_SELECTOR}' or '${RIGHT_WHEEL_SELECTOR}' not found`;
+  '${CarViewSelector.LeftWheel}' or '${CarViewSelector.RightWheel}' not found`;
 
 type CreateViewReturnType = {
   wrapper: ReturnType<typeof div>;
@@ -25,21 +29,34 @@ type CreateViewReturnType = {
   svgElement: Element;
 };
 
-export const createView = (color: string): CreateViewReturnType => {
+const CAR_TYPE = { bear, fox, monkey, pig };
+
+type ViewType = keyof typeof CAR_TYPE;
+
+const getRandomCarView = (): string => {
+  const values = Object.values(CAR_TYPE);
+  return values[rndInt(0, values.length - 1)];
+};
+
+export const createView = (color: string, type?: ViewType): CreateViewReturnType => {
   const wrapper = div({ className: styles.wrapper });
   const { node } = wrapper;
 
-  node.insertAdjacentHTML('beforeend', carSVGMarkup);
+  const carView = type ? CAR_TYPE[type] : getRandomCarView();
 
-  node.style.setProperty(CssVariableColor.Body, color);
-  node.style.setProperty(CssVariableColor.Stroke, STROKE_COLOR);
-  node.style.setProperty(CssVariableColor.Halftone, HALFTONES_COLOR);
+  node.insertAdjacentHTML('beforeend', carView);
+  node.style.setProperty(ColorCSSVariableName.Body, color);
 
   const svgElement = node.children[0];
   svgElement.classList.add(styles.carImage);
 
-  const leftWheel = svgElement.querySelector<HTMLElement>(LEFT_WHEEL_SELECTOR);
-  const rightWheel = svgElement.querySelector<HTMLElement>(RIGHT_WHEEL_SELECTOR);
+  const leftWheel = svgElement.querySelector<HTMLElement>(CarViewSelector.LeftWheel);
+  const rightWheel = svgElement.querySelector<HTMLElement>(CarViewSelector.RightWheel);
+  const shadow = svgElement.querySelector<HTMLElement>(CarViewSelector.Shadow);
+
+  if (shadow) {
+    shadow.style.opacity = CAR_SHADOW_OPACITY;
+  }
 
   if (!rightWheel || !leftWheel) {
     throw Error(ERR_WHEEL_ELEMENT_NOT_FOUND);

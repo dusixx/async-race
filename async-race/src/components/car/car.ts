@@ -1,50 +1,48 @@
-import * as api from '../../services/api/cars-api.ts';
-import type { CarData } from '../../services/api/types.ts';
-import { createView, CssVariableColor } from './utils/create-view.ts';
+import * as api from '../../services/api/garage-api.ts';
+import type { CarData, CarDriveStatusType } from '../../services/api/types.ts';
+import { ColorCSSVariableName, createView } from './utils/create-view.ts';
 
 import { getRandomHexColor, isValidHexColor } from '../../utils/color.ts';
 import { getRandomCarName } from '../../utils/misc.ts';
 import { easeOutQuint } from '../../utils/timing-funcs.ts';
 import type { div } from '../base/index.ts';
 
-import type {
-  CarStatus,
-  OnBrokenHandler,
-  OnFinishedHandler,
-  OnStartedHandler,
-  OnStoppedHandler,
-  UpdateCarData,
-} from './types.ts';
-
-const MAX_WHEEL_TURNING_ANGEL = 360 * 10;
 const ANIMATION_PROGRESS_THRESHOLD = 0.98;
+const WHEEL_MAX_TURNS_COUNT = 10;
 
-export class Car {
+export type UpdateCarData = Partial<Omit<CarData, 'id'>>;
+
+type Stats = Partial<Record<CarStatus, number>>;
+
+type OnStatusChangeHandler = ((status: CarStatus, stats?: Stats) => void) | null;
+
+type CarStatus = 'starting' | 'started' | 'stopping' | 'stopped' | CarDriveStatusType;
+
+export class Car implements CarData {
   public readonly wrapper: ReturnType<typeof div>;
-  public onStopped: OnStoppedHandler = null; // only when stopped explicity
-  public onStarted: OnStartedHandler = null;
-  public onFinished: OnFinishedHandler = null;
-  public onBroken: OnBrokenHandler = null;
+  public onChangeStatus: OnStatusChangeHandler = null;
   public status: CarStatus = 'stopped';
+  private _stats: Stats = {};
   private _name: string;
-  private _id: number = NaN;
+  private _id: number;
   private _color: string;
   private leftWheel: HTMLElement;
   private rightWheel: HTMLElement;
   private abortController: AbortController | null = null;
 
-  constructor(props?: Omit<CarData, 'id'>) {
-    const { color, name } = props ?? {};
+  constructor(props?: Partial<CarData>) {
+    const { color, name, id } = props ?? {};
+
     const carColor = color && isValidHexColor(color) ? color : getRandomHexColor();
     const carName = name || getRandomCarName();
+    this._color = carColor;
+    this._name = carName;
+    this._id = id ?? NaN;
 
     const { wrapper, leftWheel, rightWheel } = createView(carColor);
-
     this.leftWheel = leftWheel;
     this.rightWheel = rightWheel;
     this.wrapper = wrapper;
-    this._color = carColor;
-    this._name = carName;
   }
 
   public get id(): number {
@@ -59,22 +57,31 @@ export class Car {
     return this._name;
   }
 
+  public get stats(): Stats {
+    return this._stats;
+  }
+
   public async drive(distancePx: number): Promise<void> {
     await this.updateCarDataIfNecessary();
 
     const durationMs = await this.start();
-
+    if (durationMs == null) {
+      return;
+    }
     this.abortController = new AbortController();
     void api.switchCarEngineToDriveMode(this.id, this.abortController.signal).then((result) => {
       if (result === null) {
-        console.debug('aborted');
+        console.debug('drive mode aborted');
         return;
       }
       this.status = result;
+      // NOTE: probably we will never get the "finished" status here -
+      // the "eased" animation will end faster
       if (result === 'finished') {
-        this.onFinished?.();
+        this.updateStatus('finished');
       } else {
-        this.onBroken?.();
+        // NOTE: might break before the animation starts
+        this.updateStatus('broken');
       }
     });
 
@@ -82,15 +89,15 @@ export class Car {
   }
 
   public async stop(): Promise<void> {
-    // abort drive mode
+    // abort current request (started or drive)
     this.abortController?.abort();
-    this.status = 'stopped';
+    this.updateStatus('stopping');
 
     await this.updateCarDataIfNecessary();
     await api.updateCarEngineStatus(this.id, 'stopped');
 
     this.wrapper.node.style.transform = '';
-    this.onStopped?.();
+    this.updateStatus('stopped');
   }
 
   public async updateCarData(data?: UpdateCarData): Promise<void> {
@@ -107,17 +114,34 @@ export class Car {
       const { id } = await api.createCar(carData);
       this._id = id;
     } else {
-      await api.updateCarData(this._id, carData);
+      await api.updateCar(this._id, carData);
     }
   }
 
-  private async start(): Promise<number> {
-    this.status = 'started';
+  private updateStatus(status: CarStatus, fireEvent: boolean = true): void {
+    if (status === 'starting') {
+      // init stats
+      this._stats = { starting: performance.now() };
+    } else {
+      this._stats[status] = performance.now();
+    }
+    this.status = status;
+    if (fireEvent) {
+      this.onChangeStatus?.(status, this.stats);
+    }
+  }
 
-    const { velocity, distance } = await api.updateCarEngineStatus(this.id, 'started');
-    const durationMs = distance / velocity;
+  private async start(): Promise<number | null> {
+    this.updateStatus('starting');
+    this.abortController = new AbortController();
+    const result = await api.updateCarEngineStatus(this.id, 'started', this.abortController.signal);
 
-    this.onStarted?.();
+    if (result == null) {
+      console.debug('starting aborted');
+      return null;
+    }
+    const durationMs = result.distance / result.velocity;
+    this.updateStatus('started');
 
     return durationMs;
   }
@@ -127,7 +151,7 @@ export class Car {
   }
 
   private updateColor(color: string): void {
-    this.setCssProperty(CssVariableColor.Body, color);
+    this.setCssProperty(ColorCSSVariableName.Body, color);
     this._color = color;
   }
 
@@ -144,29 +168,31 @@ export class Car {
   private startAnimation(durationMs: number, distancePx: number): void {
     const startTime = performance.now();
     const effectiveDistancePx = distancePx - this.getCarWidthPx();
+    const wheelSpinTotalAngle = (360 * effectiveDistancePx * WHEEL_MAX_TURNS_COUNT) / 1000;
 
-    const frame = (): void => {
+    const move = (): void => {
       const elapsed = performance.now() - startTime;
       const easedProgress = easeOutQuint(elapsed / durationMs);
 
       const step = effectiveDistancePx * easedProgress;
-      const angle = MAX_WHEEL_TURNING_ANGEL * easedProgress;
+      const angle = wheelSpinTotalAngle * easedProgress;
 
       if (easedProgress >= ANIMATION_PROGRESS_THRESHOLD) {
-        this.status = 'finished';
-        this.onFinished?.();
+        // abort drive mode to prevent get status after finishing
+        this.abortController?.abort();
+        this.updateStatus('finished');
       }
       if (this.status !== 'started') {
-        console.debug(this.id, this.status);
+        console.debug(this.name, this.stats);
         return;
       }
       this.wrapper.node.style.transform = `translate(${step.toString()}px)`;
       this.leftWheel.style.transform = `rotate(${angle.toString()}deg)`;
       this.rightWheel.style.transform = `rotate(${angle.toString()}deg)`;
 
-      requestAnimationFrame(frame);
+      requestAnimationFrame(move);
     };
 
-    frame();
+    move();
   }
 }
