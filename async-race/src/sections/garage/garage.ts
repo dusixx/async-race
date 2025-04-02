@@ -2,19 +2,19 @@ import { Element } from '../../components/base/element.ts';
 import { Track } from '../../components/track/track.ts';
 import type { ButtonsMap } from '../../components/track/utils/create-view.ts';
 import { EventType } from '../../constants/index.ts';
-import * as api from '../../services/api/cars-api.ts';
+import * as api from '../../services/api/index.ts';
 
 import { createView } from './utils/create-view.ts';
+import { updateScore } from './utils/misc.ts';
 
 const TRACKS_PER_PAGE = 7;
 const DEFAULT_PAGE_NUMBER = 1;
 const CARS_PER_GENERATION = 100;
 
-type GarageStatus = 'race' | 'reset' | 'idle';
+type GarageStatus = 'race' | 'resetting' | 'ready' | 'needReset';
 
 export class Garage extends Element {
-  public onFinished = null;
-  public status: GarageStatus = 'idle';
+  public status: GarageStatus = 'ready';
   private buttons: ButtonsMap;
   private totalCount: number = 0;
   private currentPage: number = DEFAULT_PAGE_NUMBER;
@@ -59,43 +59,52 @@ export class Garage extends Element {
     const areAllTracksReady = this.areAllTracksReady();
 
     if (areAllTracksReady) {
-      this.status = 'idle';
+      this.status = 'ready';
     }
     // if not all tracks are ready - only reset is available
     this.disableButtons(!areAllTracksReady, ['reset']);
+
+    // should enable add and generate in single race mode?
+    //this.buttons.add.disabled = !areAllTracksReady && this.status === 'race';
+    //this.buttons.generate.disabled = !areAllTracksReady && this.status === 'race';
+
     // if reset already was pressed, leave it disabled
-    if (this.status === 'reset') {
+    if (this.status === 'resetting') {
       reset.disabled = true;
     }
   };
 
   private addTrackStatusChangeListeners(): void {
-    this.addListener(EventType.TrackBusy, this.handleTrackStatusChange);
+    this.addListener(EventType.TrackRaceStarting, this.handleTrackStatusChange);
     this.addListener(EventType.TrackReady, this.handleTrackStatusChange);
   }
 
   private addTrackRaceFinishedListener(): void {
-    this.addListener(EventType.TrackRaceFinished, (event) => {
+    this.addListener(EventType.TrackRaceFinished, ({ target }) => {
       if (this.status !== 'race') {
         return;
       }
-      if (event.target instanceof HTMLElement) {
-        const targetTrack = this.tracks.get(event.target);
+      if (target instanceof HTMLElement) {
+        const targetTrack = this.tracks.get(target);
         if (targetTrack) {
-          this.status = 'idle';
-          console.debug('WINNER:', targetTrack.car.name);
+          this.status = 'needReset';
+          updateScore(targetTrack)
+            .then((data) => {
+              console.debug(`WINNER: ${targetTrack.car.name} ${JSON.stringify(data)}`);
+            })
+            .catch(console.debug);
         }
       }
     });
   }
 
   private addTrackRemoveListener(): void {
-    this.addListener(EventType.TrackRemove, (event) => {
-      if (event.target instanceof HTMLElement) {
-        const targetTrack = this.tracks.get(event.target);
+    this.addListener(EventType.TrackRemove, ({ target }) => {
+      if (target instanceof HTMLElement) {
+        const targetTrack = this.tracks.get(target);
         if (targetTrack) {
           this.removeChildByRef(targetTrack);
-          this.tracks.delete(event.target);
+          this.tracks.delete(target);
         }
       }
     });
@@ -111,7 +120,7 @@ export class Garage extends Element {
         })
         .catch(console.debug)
         .finally(() => {
-          this.disableButtons(false);
+          this.disableButtons(false, ['reset']);
         });
     };
   }
@@ -120,7 +129,7 @@ export class Garage extends Element {
     const { reset } = this.buttons;
     reset.onClick = (): void => {
       reset.disabled = true;
-      this.status = 'reset';
+      this.status = 'resetting';
       this.tracks.forEach((track) => {
         track.reset();
       });
