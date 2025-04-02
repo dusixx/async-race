@@ -1,5 +1,5 @@
 import { EventType } from '../../constants/index.ts';
-import * as api from '../../services/api/cars-api.ts';
+import * as api from '../../services/api/garage-api.ts';
 import type { CarData } from '../../services/api/types.ts';
 import { Element } from '../base/element.ts';
 import { Car } from '../car/car.ts';
@@ -62,7 +62,7 @@ export class Track extends Element<HTMLDivElement> {
     remove.onClick = (): void => {
       this.disableButtons(true);
       api
-        .deleteCarById(this.car.id)
+        .deleteCar(this.car.id)
         .then(() => {
           this.dispatch(EventType.TrackRemove);
         })
@@ -87,24 +87,22 @@ export class Track extends Element<HTMLDivElement> {
     };
   }
 
-  private addCarStartingHandler(): void {
+  private addCarChangeStatusHandler(): void {
     const { stop } = this.buttons;
-    this.car.onStarting = (): void => {
-      stop.disabled = false;
-      this.dispatch(EventType.TrackBusy);
-    };
-  }
 
-  private addCarStoppedHandler(): void {
-    this.car.onStopped = (): void => {
-      this.disableButtons(false, ['stop']);
-      this.dispatch(EventType.TrackReady);
-    };
-  }
-
-  private addCarFinishedHandler(): void {
-    this.car.onFinished = (): void => {
-      this.dispatch(EventType.TrackRaceFinished);
+    this.car.onChangeStatus = (status): void => {
+      switch (status) {
+        case 'starting':
+          stop.disabled = false;
+          this.dispatch(EventType.TrackRaceStarting);
+          break;
+        case 'stopped':
+          this.disableButtons(false, ['stop']);
+          this.dispatch(EventType.TrackReady);
+          break;
+        case 'finished':
+          this.dispatch(EventType.TrackRaceFinished);
+      }
     };
   }
 
@@ -113,11 +111,9 @@ export class Track extends Element<HTMLDivElement> {
     this.disableButtons(false, ['stop']);
     this.node.style.setProperty(CAR_LEFT_CSSVAR, `${CAR_LEFT_PX.toString()}px`);
 
+    this.addCarChangeStatusHandler();
     this.addStartClickHandler();
-    this.addCarStartingHandler();
     this.addStopClickHandler();
-    this.addCarStoppedHandler();
     this.addRemoveClickHandler();
-    this.addCarFinishedHandler();
   }
 }
