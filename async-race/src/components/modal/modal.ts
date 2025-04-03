@@ -81,36 +81,33 @@ export class Modal extends Element<HTMLDivElement> {
 
   private handleButtonClick = ({ target }: Event): void => {
     if (target instanceof HTMLButtonElement) {
-      this._onClose?.(target === this.okButton.node ? 'confirmed' : 'cancelled');
-      this.toggle(false);
+      const result = target === this.okButton.node ? 'confirmed' : 'cancelled';
+      this.close(result);
     }
   };
 
   private handleDocumentKeydown = (event: KeyboardEvent): void => {
     if (isKeyPressed(KeyboardEventKey.Escape, event)) {
-      this.toggle(false);
+      this.close('cancelled');
     }
   };
 
-  private render(flag: boolean): void {
+  private toggle(flag: boolean): void {
     if (flag) {
+      scrollLock.toggle(true);
+      document.addEventListener('keydown', this.handleDocumentKeydown);
+
+      requestAnimationFrame(() => this.toggleClass(styles.active, true));
       body.append(this.node);
+
       return;
     }
-    this.remove();
-  }
+    scrollLock.toggle(false);
+    document.removeEventListener('keydown', this.handleDocumentKeydown);
 
-  private toggle(force: boolean): boolean {
-    const wasShown = this.toggleClass(styles.active, force);
-    scrollLock.toggle(wasShown);
-
-    if (wasShown) {
-      document.addEventListener('keydown', this.handleDocumentKeydown);
-    } else {
-      document.removeEventListener('keydown', this.handleDocumentKeydown);
-    }
-    this.render(wasShown);
-
-    return wasShown;
+    this.toggleClass(styles.active, false);
+    this.addListener('transitionend', () => {
+      body.removeChild(this.node);
+    });
   }
 }

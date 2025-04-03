@@ -1,3 +1,24 @@
+.modal {
+  position: absolute;
+  transform: scale(0.6);
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+
+  width: 320px;
+  padding: 30px;
+  border-radius: 16px;
+
+  color: var(--color-text);
+
+  opacity: 0.5;
+  background-color: var(--color-modal-bg);
+
+  @include main-transition('transform');
+}
+
 .backdrop {
   position: fixed;
   z-index: var(--backdrop-zindex);
@@ -20,26 +41,14 @@
 }
 
 .active {
+  .modal {
+    transform: scale(1);
+    opacity: 1;
+  }
+
   @include hidden(false) {
     opacity: 1;
   }
-}
-
-.modal {
-  position: absolute;
-
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-
-  width: 320px;
-  padding: 30px;
-  border-radius: 16px;
-
-  color: var(--color-text);
-
-  background-color: var(--color-modal-bg);
 }
 
 .content {
