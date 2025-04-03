@@ -1,8 +1,10 @@
 import { Element } from '../../components/base/element.ts';
+import type { Paginator } from '../../components/paginator/paginator.ts';
 import { Track } from '../../components/track/track.ts';
 import type { ButtonsMap } from '../../components/track/utils/create-view.ts';
 import { EventType } from '../../constants/index.ts';
 import * as api from '../../services/api/index.ts';
+import type { CarData } from '../../services/api/types.ts';
 
 import { createView } from './utils/create-view.ts';
 import { updateScore } from './utils/misc.ts';
@@ -16,42 +18,65 @@ type GarageStatus = 'race' | 'resetting' | 'ready' | 'needReset';
 export class Garage extends Element {
   public status: GarageStatus = 'ready';
   private buttons: ButtonsMap;
-  private totalCount: number = 0;
-  private currentPage: number = DEFAULT_PAGE_NUMBER;
-  private tracks: Map<HTMLElement, Track> = new Map();
+  private tracksMap: Map<HTMLElement, Track> = new Map();
   private tracksWrapper: Element<HTMLDivElement>;
+  private totalCounter: Element<HTMLSpanElement>;
+  private paginator: Paginator;
 
   constructor() {
     super({ tag: 'section' });
 
-    const { buttonsMap, wrapper, tracksWrapper } = createView();
+    // TODO: store page in SessionStorage
+    const { buttonsMap, wrapper, tracksWrapper, paginator, totalCarsCounter } = createView();
+
     this.buttons = buttonsMap;
     this.tracksWrapper = tracksWrapper;
+    this.totalCounter = totalCarsCounter;
 
-    void this.fetchCarsData();
+    this.paginator = paginator;
+    paginator.itemsPerPage = TRACKS_PER_PAGE;
 
     this.append(wrapper);
     this.init();
+
+    void this.fetchCarsData();
   }
 
   private areAllTracksReady(): boolean {
-    const tracks = Array.from(this.tracks.values());
+    const tracks = Array.from(this.tracksMap.values());
     return tracks.every((track) => track.isReady);
   }
 
   private async fetchCarsData(pageNumber?: number): Promise<void> {
+    pageNumber = pageNumber || DEFAULT_PAGE_NUMBER;
+
     const { items, totalCount } = await api.getAllCars({
       _limit: TRACKS_PER_PAGE,
-      _page: pageNumber || DEFAULT_PAGE_NUMBER,
+      _page: pageNumber,
     });
-    const tracksArray = items.map((carData) => {
+    this.updateCurrentTracks(items);
+    this.totalCounter.text = totalCount.toString();
+    this.paginator.totalItems = totalCount;
+    this.paginator.currentPage = pageNumber;
+  }
+
+  private updateCurrentTracks(carsData: CarData[]): void {
+    this.tracksMap.clear();
+
+    const tracksArray = carsData.map((carData) => {
       const track = new Track(carData);
-      this.tracks.set(track.node, track);
+      this.tracksMap.set(track.node, track);
+
       return track;
     });
-    this.totalCount = totalCount;
     this.tracksWrapper.removeChildren();
     this.tracksWrapper.append(...tracksArray);
+  }
+
+  private addPaginatorChangeHandler(): void {
+    this.paginator.onChange = (newPage): void => {
+      void this.fetchCarsData(newPage);
+    };
   }
 
   private handleTrackStatusChange = (): void => {
@@ -63,10 +88,7 @@ export class Garage extends Element {
     }
     // if not all tracks are ready - only reset is available
     this.disableButtons(!areAllTracksReady, ['reset']);
-
-    // should enable add and generate in single race mode?
-    //this.buttons.add.disabled = !areAllTracksReady && this.status === 'race';
-    //this.buttons.generate.disabled = !areAllTracksReady && this.status === 'race';
+    this.paginator.disabled = !areAllTracksReady;
 
     // if reset already was pressed, leave it disabled
     if (this.status === 'resetting') {
@@ -85,7 +107,7 @@ export class Garage extends Element {
         return;
       }
       if (target instanceof HTMLElement) {
-        const targetTrack = this.tracks.get(target);
+        const targetTrack = this.tracksMap.get(target);
         if (targetTrack) {
           this.status = 'needReset';
           updateScore(targetTrack)
@@ -101,23 +123,25 @@ export class Garage extends Element {
   private addTrackRemoveListener(): void {
     this.addListener(EventType.TrackRemove, ({ target }) => {
       if (target instanceof HTMLElement) {
-        const targetTrack = this.tracks.get(target);
+        const targetTrack = this.tracksMap.get(target);
         if (targetTrack) {
           this.removeChildByRef(targetTrack);
-          this.tracks.delete(target);
+          this.tracksMap.delete(target);
         }
+        void this.fetchCarsData(this.paginator.currentPage);
       }
     });
+  }
+
+  private async generateCarsAndRefetch(): Promise<void> {
+    await api.createCars(CARS_PER_GENERATION);
+    await this.fetchCarsData(this.paginator.currentPage);
   }
 
   private addGenerateClickHandler(): void {
     this.buttons.generate.onClick = (): void => {
       this.disableButtons(true);
-      api
-        .createCars(CARS_PER_GENERATION)
-        .then(() => {
-          this.totalCount += CARS_PER_GENERATION;
-        })
+      this.generateCarsAndRefetch()
         .catch(console.debug)
         .finally(() => {
           this.disableButtons(false, ['reset']);
@@ -128,9 +152,9 @@ export class Garage extends Element {
   private addResetClickHandler(): void {
     const { reset } = this.buttons;
     reset.onClick = (): void => {
-      reset.disabled = true;
       this.status = 'resetting';
-      this.tracks.forEach((track) => {
+      reset.disabled = true;
+      this.tracksMap.forEach((track) => {
         track.reset();
       });
     };
@@ -139,9 +163,9 @@ export class Garage extends Element {
   private addRaceClickHandler(): void {
     const { race } = this.buttons;
     race.onClick = (): void => {
-      race.disabled = true;
       this.status = 'race';
-      this.tracks.forEach((track) => {
+      race.disabled = true;
+      this.tracksMap.forEach((track) => {
         track.start();
       });
     };
@@ -163,5 +187,6 @@ export class Garage extends Element {
     this.addTrackRemoveListener();
     this.addResetClickHandler();
     this.addRaceClickHandler();
+    this.addPaginatorChangeHandler();
   }
 }

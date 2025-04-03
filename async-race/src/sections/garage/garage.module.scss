@@ -10,16 +10,21 @@
   background-color: var(--color-accent);
 }
 
+.add {
+  background-color: var(--color-btn-bg-sec);
+}
+
 .tracks {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
 }
 
 .left-controls,
 .right-controls {
   display: flex;
   gap: 15px;
+  align-items: center;
 }
 
 .paginator {
@@ -34,5 +39,16 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
-  padding: 20px;
+  padding: 20px 0;
+}
+
+.total-cars-wrapper {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  font-size: 15px;
+  text-transform: capitalize;
+
+  opacity: 0.4;
 }
