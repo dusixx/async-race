@@ -7,7 +7,7 @@ export type OnCloseModalHandler = ((result: ModalResult) => void) | null;
 export type ModalContent = Element | string;
 
 export type ModalProps = {
-  content: ModalContent;
+  content?: ModalContent;
   showCancelButton?: boolean;
   onClose?: OnCloseModalHandler;
 };

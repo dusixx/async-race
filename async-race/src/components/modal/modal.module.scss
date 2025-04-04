@@ -61,16 +61,16 @@
   width: 100%;
 
   line-height: 1.3;
-
-  p {
-    word-break: break-all;
-  }
 }
 
 .btn {
   @extend %btn-primary;
 
   min-width: 80px;
+}
+
+.ok-button {
+  background-color: var(--color-btn-bg-sec);
 }
 
 .buttons {

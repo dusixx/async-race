@@ -13,11 +13,12 @@ import styles from './modal.module.scss';
 const { body } = document;
 
 export class Modal extends Element<HTMLDivElement> {
+  public onClose: OnCloseModalHandler = null;
+  public onBeforeConfirm: (() => boolean) | null = null;
   private _root: ReturnType<typeof div>;
   private contentRoot: ReturnType<typeof div>;
   private okButton: Button;
   private cancelButton: Button;
-  private _onClose: OnCloseModalHandler = null;
 
   public constructor({ content, showCancelButton = true, onClose = null }: ModalProps) {
     super({ className: styles.backdrop });
@@ -30,18 +31,18 @@ export class Modal extends Element<HTMLDivElement> {
     this.cancelButton = cancelButton;
     this.onClose = onClose;
 
-    this.setContent(content);
+    okButton.toggleClass(styles.okButton);
+
+    if (content) {
+      this.setContent(content);
+    }
     this.showCancelButton(showCancelButton);
     this.append(modalRoot);
-    this.init();
+    this._init();
   }
 
   public get root(): ReturnType<typeof div> {
     return this._root;
-  }
-
-  public set onClose(handler: OnCloseModalHandler) {
-    this._onClose = handler;
   }
 
   public open(): void {
@@ -50,10 +51,10 @@ export class Modal extends Element<HTMLDivElement> {
 
   public close(result: ModalResult): void {
     this.toggle(false);
-    this._onClose?.(result);
+    this.onClose?.(result);
   }
 
-  private setContent(content: ModalContent): void {
+  public setContent(content: ModalContent): void {
     this.contentRoot.removeChildren();
     if (typeof content === 'string') {
       this.contentRoot.node.insertAdjacentHTML('beforeend', content);
@@ -66,7 +67,7 @@ export class Modal extends Element<HTMLDivElement> {
     this.cancelButton.node.style.display = flag ? '' : Visibility.None;
   }
 
-  private init(): void {
+  private _init(): void {
     this.addListener('click', (event) => {
       this.handleBackdropClick(event);
       this.handleButtonClick(event);
@@ -82,6 +83,12 @@ export class Modal extends Element<HTMLDivElement> {
   private handleButtonClick = ({ target }: Event): void => {
     if (target instanceof HTMLButtonElement) {
       const result = target === this.okButton.node ? 'confirmed' : 'cancelled';
+      if (result === 'confirmed' && this.onBeforeConfirm) {
+        // closing cancelled for some reasons
+        if (!this.onBeforeConfirm()) {
+          return;
+        }
+      }
       this.close(result);
     }
   };
@@ -104,10 +111,14 @@ export class Modal extends Element<HTMLDivElement> {
     }
     scrollLock.toggle(false);
     document.removeEventListener('keydown', this.handleDocumentKeydown);
-
     this.toggleClass(styles.active, false);
-    this.addListener('transitionend', () => {
-      body.removeChild(this.node);
-    });
+    // wait for transition ending
+    this.addListener(
+      'transitionend',
+      () => {
+        body.removeChild(this.node);
+      },
+      { once: true }
+    );
   }
 }
