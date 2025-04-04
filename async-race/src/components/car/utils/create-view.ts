@@ -1,7 +1,7 @@
 import bear from '../../../data/cars/bear.ts';
 import fox from '../../../data/cars/fox.ts';
 import monkey from '../../../data/cars/monkey.ts';
-import pig from '../../../data/cars/pig.ts';
+import piggy from '../../../data/cars/piggy.ts';
 
 import { rndInt } from '../../../utils/misc.ts';
 import { div } from '../../base/tags.ts';
@@ -27,24 +27,36 @@ type CreateViewReturnType = {
   leftWheel: HTMLElement;
   rightWheel: HTMLElement;
   svgElement: Element;
+  type: CarViewType;
 };
 
-const CAR_TYPE = { bear, fox, monkey, pig };
+export type CarViewType = 'bear' | 'fox' | 'monkey' | 'piggy';
 
-type ViewType = keyof typeof CAR_TYPE;
-
-const getRandomCarView = (): string => {
-  const values = Object.values(CAR_TYPE);
-  return values[rndInt(0, values.length - 1)];
+const CAR_TYPE: Record<CarViewType, string> = {
+  bear,
+  fox,
+  monkey,
+  piggy,
 };
 
-export const createView = (color: string, type?: ViewType): CreateViewReturnType => {
+const isCarViewType = (key: string): key is CarViewType => {
+  return key in CAR_TYPE;
+};
+
+const getRandomCarViewType = (defaultType: CarViewType = 'bear'): CarViewType => {
+  const keys = Object.keys(CAR_TYPE);
+  const key = keys[rndInt(0, keys.length - 1)];
+
+  return isCarViewType(key) ? key : defaultType;
+};
+
+export const createView = (color: string, type?: CarViewType): CreateViewReturnType => {
   const wrapper = div({ className: styles.wrapper });
   const { node } = wrapper;
 
-  const carView = type ? CAR_TYPE[type] : getRandomCarView();
+  type = type || getRandomCarViewType();
 
-  node.insertAdjacentHTML('beforeend', carView);
+  node.insertAdjacentHTML('beforeend', CAR_TYPE[type]);
   node.style.setProperty(ColorCSSVariableName.Body, color);
 
   const svgElement = node.children[0];
@@ -69,5 +81,6 @@ export const createView = (color: string, type?: ViewType): CreateViewReturnType
     svgElement,
     leftWheel,
     rightWheel,
+    type,
   };
 };

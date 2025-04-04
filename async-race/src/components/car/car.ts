@@ -1,12 +1,14 @@
 import * as api from '../../services/api/garage-api.ts';
 import type { CarData, CarDriveStatusType } from '../../services/api/types.ts';
+import type { CarViewType } from './utils/create-view.ts';
 import { ColorCSSVariableName, createView } from './utils/create-view.ts';
 
 import { getRandomHexColor, isValidHexColor } from '../../utils/color.ts';
 import { getRandomCarName } from '../../utils/misc.ts';
-import { easeOutQuint } from '../../utils/timing-funcs.ts';
+import { timingFunction } from '../../utils/timing-funcs.ts';
 import type { div } from '../base/index.ts';
 
+const FULL_ANGLE = 360;
 const ANIMATION_PROGRESS_THRESHOLD = 0.98;
 const WHEEL_MAX_TURNS_COUNT = 10;
 
@@ -18,6 +20,8 @@ type OnStatusChangeHandler = ((status: CarStatus, stats?: Stats) => void) | null
 
 type CarStatus = 'starting' | 'started' | 'stopping' | 'stopped' | CarDriveStatusType;
 
+type UpdateStatus = 'created' | 'updated';
+
 export class Car implements CarData {
   public readonly wrapper: ReturnType<typeof div>;
   public onChangeStatus: OnStatusChangeHandler = null;
@@ -26,11 +30,12 @@ export class Car implements CarData {
   private _name: string;
   private _id: number;
   private _color: string;
+  private _type: CarViewType;
   private leftWheel: HTMLElement;
   private rightWheel: HTMLElement;
   private abortController: AbortController | null = null;
 
-  constructor(props?: Partial<CarData>) {
+  constructor(props?: Partial<CarData>, carType?: CarViewType) {
     const { color, name, id } = props ?? {};
 
     const carColor = color && isValidHexColor(color) ? color : getRandomHexColor();
@@ -39,7 +44,8 @@ export class Car implements CarData {
     this._name = carName;
     this._id = id ?? NaN;
 
-    const { wrapper, leftWheel, rightWheel } = createView(carColor);
+    const { wrapper, leftWheel, rightWheel, type } = createView(carColor, carType);
+    this._type = type;
     this.leftWheel = leftWheel;
     this.rightWheel = rightWheel;
     this.wrapper = wrapper;
@@ -59,6 +65,24 @@ export class Car implements CarData {
 
   public get stats(): Stats {
     return this._stats;
+  }
+
+  public get type(): CarViewType {
+    return this._type;
+  }
+
+  public get isExists(): boolean {
+    return !Number.isNaN(this._id);
+  }
+
+  public set color(value: string) {
+    this.updateColor(value);
+  }
+
+  public set name(value: string) {
+    if (value) {
+      this._name = value;
+    }
   }
 
   public async drive(distancePx: number): Promise<void> {
@@ -100,21 +124,18 @@ export class Car implements CarData {
     this.updateStatus('stopped');
   }
 
-  public async updateCarData(data?: UpdateCarData): Promise<void> {
-    const { name, color } = data ?? {};
-
+  public async updateCarData(): Promise<UpdateStatus> {
     const carData = {
-      name: name || this.name,
-      color: color && isValidHexColor(color) ? color : this.color,
+      name: this.name,
+      color: this.color,
     };
-    this._name = carData.name;
-    this.updateColor(carData.color);
-
-    if (Number.isNaN(this.id)) {
+    if (!this.isExists) {
       const { id } = await api.createCar(carData);
       this._id = id;
+      return 'created';
     } else {
       await api.updateCar(this._id, carData);
+      return 'updated';
     }
   }
 
@@ -146,17 +167,16 @@ export class Car implements CarData {
     return durationMs;
   }
 
-  private setCssProperty(name: string, value: string): void {
-    this.wrapper.node.style.setProperty(name, value);
-  }
-
   private updateColor(color: string): void {
-    this.setCssProperty(ColorCSSVariableName.Body, color);
+    if (!isValidHexColor(color)) {
+      return;
+    }
+    this.wrapper.node.style.setProperty(ColorCSSVariableName.Body, color);
     this._color = color;
   }
 
   private async updateCarDataIfNecessary(): Promise<void> {
-    if (Number.isNaN(this.id)) {
+    if (!this.isExists) {
       await this.updateCarData();
     }
   }
@@ -168,17 +188,17 @@ export class Car implements CarData {
   private startAnimation(durationMs: number, distancePx: number): void {
     const startTime = performance.now();
     const effectiveDistancePx = distancePx - this.getCarWidthPx();
-    const wheelSpinTotalAngle = (360 * effectiveDistancePx * WHEEL_MAX_TURNS_COUNT) / 1000;
+    const wheelSpinTotalAngle = (FULL_ANGLE * effectiveDistancePx * WHEEL_MAX_TURNS_COUNT) / 1000;
 
     const move = (): void => {
       const elapsed = performance.now() - startTime;
-      const easedProgress = easeOutQuint(elapsed / durationMs);
+      const progress = timingFunction.easeOutQuint(elapsed / durationMs);
 
-      const step = effectiveDistancePx * easedProgress;
-      const angle = wheelSpinTotalAngle * easedProgress;
+      const step = effectiveDistancePx * progress;
+      const angle = wheelSpinTotalAngle * progress;
 
-      if (easedProgress >= ANIMATION_PROGRESS_THRESHOLD) {
-        // abort drive mode to prevent get status after finishing
+      if (progress >= ANIMATION_PROGRESS_THRESHOLD) {
+        // abort drive mode
         this.abortController?.abort();
         this.updateStatus('finished');
       }
