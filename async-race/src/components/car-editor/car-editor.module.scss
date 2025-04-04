@@ -1,0 +1,56 @@
+.editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.heading {
+  display: flex;
+  justify-content: center;
+
+  width: 100%;
+  padding: 5px;
+  border-radius: var(--border-radius);
+
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  background-color: rgb(238 238 238);
+}
+
+.note {
+  display: flex;
+  font-size: 13px;
+  color: gray;
+  text-align: center;
+}
+
+.car-view {
+  display: flex;
+}
+
+.inputs-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.car-name {
+  @extend %text-input;
+
+  width: 100%;
+  padding-left: 10px;
+}
+
+.car-color {
+  cursor: pointer;
+  aspect-ratio: 1;
+  height: 90%;
+  border: none;
+}
