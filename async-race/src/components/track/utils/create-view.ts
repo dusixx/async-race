@@ -9,7 +9,7 @@ const ICONS_FILE_PATH = './icons-2.svg';
 const buttonsData = {
   start: 'start',
   stop: 'stop',
-  edit: 'edit-3',
+  update: 'edit-3',
   remove: 'remove',
 };
 

@@ -2,6 +2,7 @@ import { EventType } from '../../constants/index.ts';
 import * as api from '../../services/api/garage-api.ts';
 import type { CarData } from '../../services/api/types.ts';
 import { Element } from '../base/element.ts';
+import { CarEditor } from '../car-editor/car-editor.ts';
 import { Car } from '../car/car.ts';
 
 import styles from './track.module.scss';
@@ -15,6 +16,7 @@ export class Track extends Element<HTMLDivElement> {
   public car: Car;
   private carName: Element<HTMLSpanElement>;
   private buttons: ButtonsMap;
+  private carEditor: CarEditor = new CarEditor();
 
   constructor(carData: CarData) {
     super({ className: styles.track });
@@ -106,6 +108,18 @@ export class Track extends Element<HTMLDivElement> {
     };
   }
 
+  private addUpdateClickHandler(): void {
+    const { update } = this.buttons;
+    update.onClick = (): void => {
+      this.carEditor.update(this.car);
+    };
+    this.carEditor.onUpdate = ({ name, color }): void => {
+      this.car.name = name;
+      this.car.color = color;
+      this.carName.text = name;
+    };
+  }
+
   private init(): void {
     // enable all but stop
     this.disableButtons(false, ['stop']);
@@ -115,5 +129,6 @@ export class Track extends Element<HTMLDivElement> {
     this.addStartClickHandler();
     this.addStopClickHandler();
     this.addRemoveClickHandler();
+    this.addUpdateClickHandler();
   }
 }
