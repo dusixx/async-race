@@ -41,7 +41,7 @@ export async function createWinner(winnerData: WinnerData): Promise<boolean> {
     },
     body: JSON.stringify(winnerData),
   });
-  if (response?.status === HttpStatus.InternalServerError.valueOf()) {
+  if (response?.status === HttpStatus.InternalServerError) {
     return false;
   }
   const data: unknown = await response?.json();

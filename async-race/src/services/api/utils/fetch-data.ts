@@ -41,7 +41,7 @@ export async function fetchData(
   if (queryParameters) {
     url += `?${createQueryString(queryParameters)}`;
   }
-  console.debug('fetchData:', init?.method ?? 'GET', url.replace(BASE_URL, ''));
+  console.debug(init?.method ?? 'GET', url.replace(BASE_URL, ''));
 
   return await fetch(url, init);
   // if (!response.ok) {

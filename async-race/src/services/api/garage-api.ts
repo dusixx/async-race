@@ -1,3 +1,4 @@
+import { getRandomCarViewType } from '../../components/car/utils/misc.ts';
 import { getRandomHexColor } from '../../utils/color.ts';
 import { getRandomCarName } from '../../utils/misc.ts';
 import type { AllCarsData, CarDriveStatusType } from './types.ts';
@@ -9,7 +10,7 @@ import {
   type QueryParameters,
 } from './types.ts';
 import { CONTENT_TYPE, Endpoint, fetchData, HttpMethod } from './utils/fetch-data.ts';
-import { HttpError, HttpStatus } from './utils/http-error.ts';
+import { HttpStatus } from './utils/http-error.ts';
 import {
   isAbortError,
   isCarData,
@@ -17,9 +18,9 @@ import {
   isCarVelocityAndDistance,
 } from './utils/index.ts';
 
-const ERR_DATA_REQUIRED = `'color' and 'name' are required`;
+const ERR_ALL_REQUIRED = `all fields except 'id' are required`;
+const ERR_ONE_REQUIRED = `at least one field is required`;
 const ERR_INVALID_DATA = `invalid data format`;
-const ERR_CONNECTION_REFUSED = 'check your connection to the server';
 
 export async function getCarsTotalCount(): Promise<number> {
   const response = await fetchData(Endpoint.Cars, { _limit: 0 });
@@ -46,7 +47,7 @@ export async function getCar(id: number): Promise<CarData | null> {
 
 export async function createCar(carData: Omit<CarData, 'id'>): Promise<CarData> {
   if (!carData.color || !carData.name) {
-    throw Error(ERR_DATA_REQUIRED);
+    throw Error(ERR_ALL_REQUIRED);
   }
   const response = await fetchData(Endpoint.Cars, null, {
     method: HttpMethod.Post,
@@ -71,9 +72,12 @@ export async function deleteCar(id: number): Promise<boolean> {
   return Boolean(response?.ok);
 }
 
-export async function updateCar(id: number, carData: Omit<CarData, 'id'>): Promise<CarData> {
-  if (!carData.color || !carData.name) {
-    throw Error(ERR_DATA_REQUIRED);
+export async function updateCar(
+  id: number,
+  carData: Partial<Omit<CarData, 'id'>>
+): Promise<CarData> {
+  if (!carData.color || !carData.name || !carData.type) {
+    throw Error(ERR_ONE_REQUIRED);
   }
   const path = `${Endpoint.Cars.toString()}/${id.toString()}`;
   const response = await fetchData(path, null, {
@@ -131,11 +135,8 @@ export async function switchCarEngineToDriveMode(
       { method: HttpMethod.Patch, signal }
     );
 
-    return response?.status === HttpStatus.InternalServerError.valueOf() ? 'broken' : 'finished';
+    return response?.status === HttpStatus.InternalServerError ? 'broken' : 'finished';
   } catch (error) {
-    // if (isInternalServiceError(error)) {
-    //   return 'broken';
-    // }
     if (isAbortError(error)) {
       return null;
     }
@@ -144,17 +145,22 @@ export async function switchCarEngineToDriveMode(
 }
 
 export async function createCars(count: number): Promise<void> {
-  for (let i = count; i; i -= 1) {
-    try {
-      await createCar({
+  if (count <= 0) {
+    return;
+  }
+  try {
+    // test request to catch ERR_CONNECTION_REFUSED
+    await getCarsTotalCount();
+    const creationRequests = Array.from({ length: count }).map(() =>
+      createCar({
         name: getRandomCarName(),
         color: getRandomHexColor(),
-      });
-    } catch (error) {
-      if (!(error instanceof HttpError)) {
-        console.debug(ERR_CONNECTION_REFUSED);
-        return;
-      }
-    }
+        type: getRandomCarViewType(),
+      })
+    );
+    await Promise.all(creationRequests);
+  } catch (error) {
+    // probably ERR_CONNECTION_REFUSED
+    console.debug(error);
   }
 }

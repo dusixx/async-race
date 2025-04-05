@@ -1,3 +1,5 @@
+import type { CarViewType } from '../../components/car/utils/misc.ts';
+
 export type QueryParameterValue = string | number | boolean | null | undefined;
 
 export type QueryParameters = Record<string, QueryParameterValue>;
@@ -18,9 +20,10 @@ export type CarVelocityAndDistance = {
 };
 
 export type CarData = {
+  id: number;
   name: string;
   color: string;
-  id: number;
+  type: CarViewType;
 };
 
 export type AllCarsData = {
