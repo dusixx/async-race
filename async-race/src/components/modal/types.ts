@@ -10,4 +10,5 @@ export type ModalProps = {
   content?: ModalContent;
   showCancelButton?: boolean;
   onClose?: OnCloseModalHandler;
+  parent?: HTMLElement | Element;
 };

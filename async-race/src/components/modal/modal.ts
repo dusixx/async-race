@@ -13,6 +13,7 @@ import styles from './modal.module.scss';
 const { body } = document;
 
 export class Modal extends Element<HTMLDivElement> {
+  public parent: HTMLElement | Element;
   public onClose: OnCloseModalHandler = null;
   public onBeforeConfirm: (() => boolean) | null = null;
   private _root: ReturnType<typeof div>;
@@ -20,7 +21,12 @@ export class Modal extends Element<HTMLDivElement> {
   private okButton: Button;
   private cancelButton: Button;
 
-  public constructor({ content, showCancelButton = true, onClose = null }: ModalProps) {
+  public constructor({
+    content,
+    showCancelButton = true,
+    onClose = null,
+    parent = body,
+  }: ModalProps) {
     super({ className: styles.backdrop });
 
     const { contentContainer, okButton, cancelButton, modalRoot } = createElements();
@@ -30,6 +36,7 @@ export class Modal extends Element<HTMLDivElement> {
     this.okButton = okButton;
     this.cancelButton = cancelButton;
     this.onClose = onClose;
+    this.parent = parent;
 
     okButton.toggleClass(styles.okButton);
 
@@ -82,10 +89,16 @@ export class Modal extends Element<HTMLDivElement> {
 
   private handleButtonClick = ({ target }: Event): void => {
     if (target instanceof HTMLButtonElement) {
-      const result = target === this.okButton.node ? 'confirmed' : 'cancelled';
-      if (result === 'confirmed' && this.onBeforeConfirm) {
-        // closing cancelled for some reasons
-        if (!this.onBeforeConfirm()) {
+      const { okButton, cancelButton, onBeforeConfirm } = this;
+      let result: ModalResult = 'confirmed';
+
+      if (target !== okButton.node && target !== cancelButton.node) {
+        return;
+      }
+      result = target === okButton.node ? 'confirmed' : 'cancelled';
+      if (result === 'confirmed') {
+        // cancelled for some reasons
+        if (onBeforeConfirm && !onBeforeConfirm()) {
           return;
         }
       }
@@ -99,13 +112,30 @@ export class Modal extends Element<HTMLDivElement> {
     }
   };
 
+  private render(flag: boolean): void {
+    const { parent } = this;
+    if (parent instanceof HTMLElement) {
+      if (flag) {
+        parent.append(this.node);
+      } else {
+        parent.removeChild(this.node);
+      }
+    } else {
+      if (flag) {
+        parent.append(this);
+      } else {
+        parent.removeChildByRef(this);
+      }
+    }
+  }
+
   private toggle(flag: boolean): void {
     if (flag) {
       scrollLock.toggle(true);
       document.addEventListener('keydown', this.handleDocumentKeydown);
 
       requestAnimationFrame(() => this.toggleClass(styles.active, true));
-      body.append(this.node);
+      this.render(true);
 
       return;
     }
@@ -116,7 +146,7 @@ export class Modal extends Element<HTMLDivElement> {
     this.addListener(
       'transitionend',
       () => {
-        body.removeChild(this.node);
+        this.render(false);
       },
       { once: true }
     );
