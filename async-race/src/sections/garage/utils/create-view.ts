@@ -24,8 +24,9 @@ const createButtons = (): ButtonsMap => {
     const button = new Button({ className: styles.button, title: name, text });
     if (text === buttonsData.race) {
       button.toggleClass(styles.race);
-    }
-    if (text === buttonsData.add) {
+    } else if (text === buttonsData.reset) {
+      button.toggleClass(styles.reset);
+    } else if (text === buttonsData.add) {
       button.toggleClass(styles.add);
     }
     buttonsMap[name] = button;
@@ -59,11 +60,10 @@ export const createView = (): {
   const buttonsMap = createButtons();
   const paginator = new Paginator();
 
-  leftControls.append(buttonsMap.generate, buttonsMap.add, paginator, totalCarsWrapper);
-  rightControls.append(buttonsMap.race, buttonsMap.reset);
+  rightControls.append(buttonsMap.add, buttonsMap.generate, paginator);
+  leftControls.append(buttonsMap.reset, buttonsMap.race, totalCarsWrapper);
 
   header.append(leftControls, rightControls);
-
   wrapper.append(header, tracksWrapper);
 
   return { buttonsMap, wrapper, tracksWrapper, paginator, totalCarsCounter };

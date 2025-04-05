@@ -1,13 +1,14 @@
 import { Element } from '../../components/base/element.ts';
+import { CarEditor } from '../../components/car-editor/car-editor.ts';
 import type { Paginator } from '../../components/paginator/paginator.ts';
 import { Track } from '../../components/track/track.ts';
 import type { ButtonsMap } from '../../components/track/utils/create-view.ts';
-import { EventType } from '../../constants/index.ts';
+import { EventType, Icon } from '../../constants/index.ts';
 import * as api from '../../services/api/index.ts';
 import type { CarData } from '../../services/api/types.ts';
 
 import { createView } from './utils/create-view.ts';
-import { updateScore } from './utils/misc.ts';
+import { getFinishingTimeSecs, showWinner } from './utils/misc.ts';
 
 const TRACKS_PER_PAGE = 7;
 const DEFAULT_PAGE_NUMBER = 1;
@@ -22,11 +23,11 @@ export class Garage extends Element {
   private tracksWrapper: Element<HTMLDivElement>;
   private totalCounter: Element<HTMLSpanElement>;
   private paginator: Paginator;
+  private carEditor: CarEditor = new CarEditor();
 
   constructor() {
     super({ tag: 'section' });
 
-    // TODO: store page in SessionStorage
     const { buttonsMap, wrapper, tracksWrapper, paginator, totalCarsCounter } = createView();
 
     this.buttons = buttonsMap;
@@ -110,11 +111,9 @@ export class Garage extends Element {
         const targetTrack = this.tracksMap.get(target);
         if (targetTrack) {
           this.status = 'needReset';
-          updateScore(targetTrack)
-            .then((data) => {
-              console.debug(`WINNER: ${targetTrack.car.name} ${JSON.stringify(data)}`);
-            })
-            .catch(console.debug);
+          const time = getFinishingTimeSecs(targetTrack.car.stats).toString();
+          targetTrack.showStatus({ message: `won in ${time}`, success: true, icon: Icon.Reward });
+          showWinner(targetTrack, this);
         }
       }
     });
@@ -171,6 +170,17 @@ export class Garage extends Element {
     };
   }
 
+  private addAddClickHandler(): void {
+    const { add } = this.buttons;
+    add.onClick = (): void => {
+      this.carEditor.showCreateDialog();
+    };
+    // refetch cars data
+    this.carEditor.onCreate = (): void => {
+      void this.fetchCarsData(this.paginator.currentPage);
+    };
+  }
+
   private disableButtons(flag: boolean, exceptNames: string[] = []): void {
     Object.entries(this.buttons).forEach(([name, button]) => {
       button.disabled = exceptNames.includes(name) ? !flag : flag;
@@ -188,5 +198,6 @@ export class Garage extends Element {
     this.addResetClickHandler();
     this.addRaceClickHandler();
     this.addPaginatorChangeHandler();
+    this.addAddClickHandler();
   }
 }
