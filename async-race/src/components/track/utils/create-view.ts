@@ -46,10 +46,14 @@ export const createView = (): {
   buttonsMap: ButtonsMap;
   carName: ReturnType<typeof span>;
   headerWrapper: ReturnType<typeof div>;
+  overlay: ReturnType<typeof div>;
+  statusInfo: ReturnType<typeof span>;
 } => {
   const { buttonsWrapper, buttonsMap } = createButtonsWrapper();
   const carName = span({ className: styles.carName });
   const headerWrapper = div({ className: styles.header }, buttonsWrapper, carName);
+  const statusInfo = span({ className: styles.statusInfo });
+  const overlay = div({ className: styles.overlay }, statusInfo);
 
-  return { buttonsMap, carName, headerWrapper };
+  return { overlay, buttonsMap, carName, headerWrapper, statusInfo };
 };

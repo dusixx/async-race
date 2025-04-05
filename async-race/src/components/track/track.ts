@@ -1,4 +1,5 @@
-import { EventType } from '../../constants/index.ts';
+import { EventType, Icon } from '../../constants/index.ts';
+import { getFinishingTimeSecs } from '../../sections/garage/utils/misc.ts';
 import * as api from '../../services/api/garage-api.ts';
 import type { CarData } from '../../services/api/types.ts';
 import { Element } from '../base/element.ts';
@@ -11,28 +12,43 @@ import { createView } from './utils/create-view.ts';
 
 const CAR_LEFT_CSSVAR = '--car-left';
 const CAR_LEFT_PX = 20;
+const STATUS_SUCCESS_COLOR = 'var(--color-btn-bg-sec)';
+const STATUS_ERROR_COLOR = 'var(--color-accent)';
+const BROKEN_STATUS_TEXT = 'connection lost';
+
+type ShowStatusProps = {
+  message: string;
+  success?: boolean;
+  icon?: string;
+};
 
 export class Track extends Element<HTMLDivElement> {
   public car: Car;
   private carName: Element<HTMLSpanElement>;
   private buttons: ButtonsMap;
   private carEditor: CarEditor = new CarEditor();
+  private statusInfo: Element<HTMLSpanElement>;
+  private overlay: Element<HTMLDivElement>;
 
   constructor(carData: CarData) {
     super({ className: styles.track });
 
     this.car = new Car(carData);
 
-    const { buttonsMap, carName, headerWrapper } = createView();
+    const { buttonsMap, carName, headerWrapper, overlay, statusInfo } = createView();
     this.carName = carName;
     this.carName.text = carData.name;
     this.buttons = buttonsMap;
 
-    this.init();
+    this.statusInfo = statusInfo;
+    this.overlay = overlay;
+    this.hideStatus();
 
     // relative to the track
     this.car.wrapper.toggleClass(styles.carPosition);
-    this.append(headerWrapper, this.car.wrapper);
+    this.append(overlay, headerWrapper, this.car.wrapper);
+
+    this.init();
   }
 
   public get isReady(): boolean {
@@ -47,6 +63,20 @@ export class Track extends Element<HTMLDivElement> {
     if (this.isReady) {
       this.buttons.start.node.click();
     }
+  }
+
+  public showStatus({ message, success, icon }: ShowStatusProps): void {
+    const { style } = this.statusInfo.node;
+    icon = icon || (success ? Icon.CheckMark : Icon.CrossMark);
+    const color = success ? STATUS_SUCCESS_COLOR : STATUS_ERROR_COLOR;
+
+    this.statusInfo.text = `${icon} ${message}`;
+    style.borderColor = color;
+    this.overlay.toggleClass(styles.active, true);
+  }
+
+  private hideStatus(): void {
+    this.overlay.toggleClass(styles.active, false);
   }
 
   private getTrackWidthPx(): number {
@@ -94,29 +124,51 @@ export class Track extends Element<HTMLDivElement> {
 
     this.car.onChangeStatus = (status): void => {
       switch (status) {
-        case 'starting':
+        case 'broken': {
+          this.showStatus({ message: BROKEN_STATUS_TEXT });
+          break;
+        }
+        case 'starting': {
           stop.disabled = false;
           this.dispatch(EventType.TrackRaceStarting);
           break;
-        case 'stopped':
+        }
+        case 'stopped': {
+          this.hideStatus();
           this.disableButtons(false, ['stop']);
           this.dispatch(EventType.TrackReady);
           break;
-        case 'finished':
+        }
+        case 'finished': {
+          const time = getFinishingTimeSecs(this.car.stats).toString();
+          this.showStatus({ message: `finished in ${time}`, success: true });
           this.dispatch(EventType.TrackRaceFinished);
+        }
       }
     };
   }
 
+  private replaceCar(newCar: Car): void {
+    const { wrapper, name } = newCar;
+    wrapper.toggleClass(styles.carPosition);
+
+    this.removeChildByRef(this.car.wrapper);
+    this.append(newCar.wrapper);
+
+    this.car = newCar;
+    this.carName.text = name;
+    // update handler for new instance
+    this.addCarChangeStatusHandler();
+  }
+
   private addUpdateClickHandler(): void {
     const { update } = this.buttons;
+
     update.onClick = (): void => {
-      this.carEditor.update(this.car);
+      this.carEditor.showUpdateDialog(this.car);
     };
-    this.carEditor.onUpdate = ({ name, color }): void => {
-      this.car.name = name;
-      this.car.color = color;
-      this.carName.text = name;
+    this.carEditor.onUpdate = (updatedCar): void => {
+      this.replaceCar(updatedCar);
     };
   }
 
