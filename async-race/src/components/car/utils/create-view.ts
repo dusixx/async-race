@@ -1,11 +1,7 @@
-import bear from '../../../data/cars/bear.ts';
-import fox from '../../../data/cars/fox.ts';
-import monkey from '../../../data/cars/monkey.ts';
-import piggy from '../../../data/cars/piggy.ts';
-
-import { rndInt } from '../../../utils/misc.ts';
 import { div } from '../../base/tags.ts';
 import styles from '../car.module.scss';
+import type { CarViewType } from './misc.ts';
+import { CAR_TYPE, getRandomCarViewType } from './misc.ts';
 
 const CAR_SHADOW_OPACITY = '0.5';
 
@@ -30,27 +26,7 @@ type CreateViewReturnType = {
   type: CarViewType;
 };
 
-export type CarViewType = 'bear' | 'fox' | 'monkey' | 'piggy';
-
-const CAR_TYPE: Record<CarViewType, string> = {
-  bear,
-  fox,
-  monkey,
-  piggy,
-};
-
-const isCarViewType = (key: string): key is CarViewType => {
-  return key in CAR_TYPE;
-};
-
-const getRandomCarViewType = (defaultType: CarViewType = 'bear'): CarViewType => {
-  const keys = Object.keys(CAR_TYPE);
-  const key = keys[rndInt(0, keys.length - 1)];
-
-  return isCarViewType(key) ? key : defaultType;
-};
-
-export const createView = (color: string, type?: CarViewType): CreateViewReturnType => {
+export const createView = (color: string, type: CarViewType | undefined): CreateViewReturnType => {
   const wrapper = div({ className: styles.wrapper });
   const { node } = wrapper;
 

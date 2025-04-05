@@ -1,12 +1,12 @@
 import * as api from '../../services/api/garage-api.ts';
 import type { CarData, CarDriveStatusType } from '../../services/api/types.ts';
-import type { CarViewType } from './utils/create-view.ts';
 import { ColorCSSVariableName, createView } from './utils/create-view.ts';
 
 import { getRandomHexColor, isValidHexColor } from '../../utils/color.ts';
 import { getRandomCarName } from '../../utils/misc.ts';
 import { timingFunction } from '../../utils/timing-funcs.ts';
 import type { div } from '../base/index.ts';
+import type { CarViewType } from './utils/misc.ts';
 
 const FULL_ANGLE = 360;
 const ANIMATION_PROGRESS_THRESHOLD = 0.98;
@@ -14,19 +14,19 @@ const WHEEL_MAX_TURNS_COUNT = 10;
 
 export type UpdateCarData = Partial<Omit<CarData, 'id'>>;
 
-type Stats = Partial<Record<CarStatus, number>>;
+export type CarStats = Partial<Record<CarStatus, number>>;
 
-type OnStatusChangeHandler = ((status: CarStatus, stats?: Stats) => void) | null;
+type OnStatusChangeHandler = ((status: CarStatus, stats?: CarStats) => void) | null;
 
 type CarStatus = 'starting' | 'started' | 'stopping' | 'stopped' | CarDriveStatusType;
 
 type UpdateStatus = 'created' | 'updated';
 
-export class Car implements CarData {
+export class Car {
   public readonly wrapper: ReturnType<typeof div>;
   public onChangeStatus: OnStatusChangeHandler = null;
   public status: CarStatus = 'stopped';
-  private _stats: Stats = {};
+  private _stats: CarStats = {};
   private _name: string;
   private _id: number;
   private _color: string;
@@ -35,8 +35,8 @@ export class Car implements CarData {
   private rightWheel: HTMLElement;
   private abortController: AbortController | null = null;
 
-  constructor(props?: Partial<CarData>, carType?: CarViewType) {
-    const { color, name, id } = props ?? {};
+  constructor(props?: Partial<CarData>) {
+    const { color, name, id, type } = props ?? {};
 
     const carColor = color && isValidHexColor(color) ? color : getRandomHexColor();
     const carName = name || getRandomCarName();
@@ -44,8 +44,8 @@ export class Car implements CarData {
     this._name = carName;
     this._id = id ?? NaN;
 
-    const { wrapper, leftWheel, rightWheel, type } = createView(carColor, carType);
-    this._type = type;
+    const { wrapper, leftWheel, rightWheel, type: carType } = createView(carColor, type);
+    this._type = carType;
     this.leftWheel = leftWheel;
     this.rightWheel = rightWheel;
     this.wrapper = wrapper;
@@ -63,7 +63,7 @@ export class Car implements CarData {
     return this._name;
   }
 
-  public get stats(): Stats {
+  public get stats(): CarStats {
     return this._stats;
   }
 
@@ -128,6 +128,7 @@ export class Car implements CarData {
     const carData = {
       name: this.name,
       color: this.color,
+      type: this.type,
     };
     if (!this.isExists) {
       const { id } = await api.createCar(carData);
