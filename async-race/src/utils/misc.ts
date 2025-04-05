@@ -1,11 +1,13 @@
 import type { KeyboardEventKey } from '../constants/index.ts';
+import brands from '../data/brands.ts';
 
 export const genId = (): string => {
   return Math.random().toString(24).slice(2);
 };
 
 export const isPositiveInt = (v: number | string): v is number => {
-  return Number.isInteger(typeof v === 'number' ? v : parseFloat(v));
+  const number = typeof v === 'number' ? v : parseFloat(v);
+  return Number.isInteger(number);
 };
 
 export const rndInt = (min: number, max: number): number => {
@@ -49,3 +51,10 @@ export const isKeyPressed = (key: KeyboardEventKey, event: KeyboardEvent): boole
 };
 
 export const radToDeg = (rad: number): number => rad * (180 / Math.PI);
+
+export function getRandomCarName(): string {
+  const { brand, models } = brands[rndInt(0, brands.length - 1)];
+  const model = models[rndInt(0, models.length - 1)];
+
+  return `${brand} ${model}`;
+}

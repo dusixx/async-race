@@ -1,3 +1,4 @@
+//import colorPalette from '../data/color-palette.ts';
 import { rndInt } from './misc.ts';
 
 type ColorRGBHex = { rgb: number[]; hex: string };
@@ -23,3 +24,15 @@ export const getRndColorMixCss = ({
 
   return `color-mix(in oklab, ${colorHex} ${randomInt}%, ${baseColor} ${percent.toString()}%)`;
 };
+
+export const isValidHexColor = (color: string): boolean => {
+  return /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color);
+};
+
+// export function getRandomHexColor(): string {
+//   return colorPalette[rndInt(0, colorPalette.length - 1)];
+// }
+
+export function getRandomHexColor(): string {
+  return `#${rndInt(0, 0xffffff).toString(16).padStart(6, '0')}`;
+}
