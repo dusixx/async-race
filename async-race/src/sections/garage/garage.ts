@@ -43,6 +43,17 @@ export class Garage extends Element {
     void this.fetchCarsData();
   }
 
+  private async waitUntilEveryoneIsReadyToGo(): Promise<void> {
+    const onStarted = [...this.tracksMap.values()].map((track) => {
+      return new Promise((resolve) => {
+        track.onStarted = (): void => {
+          resolve(null);
+        };
+      });
+    });
+    await Promise.all(onStarted);
+  }
+
   private areAllTracksReady(): boolean {
     const tracks = Array.from(this.tracksMap.values());
     return tracks.every((track) => track.isReady);
@@ -112,22 +123,30 @@ export class Garage extends Element {
         if (targetTrack) {
           this.status = 'needReset';
           const time = getFinishingTimeSecs(targetTrack.car.stats).toString();
-          targetTrack.showStatus({ message: `won in ${time}`, success: true, icon: Icon.Reward });
+          targetTrack.showStatus({
+            message: `won in ${time}`,
+            success: true,
+            icon: Icon.Reward,
+          });
           showWinner(targetTrack, this);
         }
       }
     });
   }
 
+  private removeTrackByNode(node: HTMLElement): void {
+    const targetTrack = this.tracksMap.get(node);
+    if (targetTrack) {
+      this.removeChildByRef(targetTrack);
+      this.tracksMap.delete(node);
+    }
+    void this.fetchCarsData(this.paginator.currentPage);
+  }
+
   private addTrackRemoveListener(): void {
     this.addListener(EventType.TrackRemove, ({ target }) => {
       if (target instanceof HTMLElement) {
-        const targetTrack = this.tracksMap.get(target);
-        if (targetTrack) {
-          this.removeChildByRef(targetTrack);
-          this.tracksMap.delete(target);
-        }
-        void this.fetchCarsData(this.paginator.currentPage);
+        this.removeTrackByNode(target);
       }
     });
   }
@@ -153,6 +172,7 @@ export class Garage extends Element {
     reset.onClick = (): void => {
       this.status = 'resetting';
       reset.disabled = true;
+
       this.tracksMap.forEach((track) => {
         track.reset();
       });
@@ -164,8 +184,10 @@ export class Garage extends Element {
     race.onClick = (): void => {
       this.status = 'race';
       race.disabled = true;
+
+      const delayBeforeStart = this.waitUntilEveryoneIsReadyToGo();
       this.tracksMap.forEach((track) => {
-        track.start();
+        track.start(delayBeforeStart);
       });
     };
   }

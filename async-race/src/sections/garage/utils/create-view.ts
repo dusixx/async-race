@@ -61,7 +61,7 @@ export const createView = (): {
   const paginator = new Paginator();
 
   rightControls.append(buttonsMap.add, buttonsMap.generate, paginator);
-  leftControls.append(buttonsMap.reset, buttonsMap.race, totalCarsWrapper);
+  leftControls.append(buttonsMap.race, buttonsMap.reset, totalCarsWrapper);
 
   header.append(leftControls, rightControls);
   wrapper.append(header, tracksWrapper);
