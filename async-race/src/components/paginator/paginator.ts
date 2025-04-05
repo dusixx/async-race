@@ -7,6 +7,7 @@ import styles from './paginator.module.scss';
 const START_PAGE_NUMBER = 1;
 const MIN_ITEMS_PER_PAGE = 1;
 const MIN_TOTAL_ITEMS = 1;
+const PAGES_PER_CLICK = 1;
 
 type OnChangeHandler = ((newPage: number) => void) | null;
 
@@ -16,9 +17,9 @@ export class Paginator extends Element<HTMLDivElement> {
   private currentPageRef: Element<HTMLSpanElement>;
   private next: Button;
   private previous: Button;
-  private _currentPage: number = 1;
-  private _totalItems: number = 1;
-  private _itemsPerPage: number = 1;
+  private _currentPage: number = START_PAGE_NUMBER;
+  private _totalItems: number = MIN_TOTAL_ITEMS;
+  private _itemsPerPage: number = MIN_ITEMS_PER_PAGE;
 
   constructor() {
     super({ className: styles.wrapper });
@@ -95,7 +96,7 @@ export class Paginator extends Element<HTMLDivElement> {
   private addNextClickHandler(): void {
     const { next } = this;
     next.onClick = (): void => {
-      this._currentPage = Math.min(this._currentPage + 1, this.totalPages);
+      this._currentPage = Math.min(this._currentPage + PAGES_PER_CLICK, this.totalPages);
       this.update();
     };
   }
@@ -103,7 +104,7 @@ export class Paginator extends Element<HTMLDivElement> {
   private addPrevClickHandler(): void {
     const { previous } = this;
     previous.onClick = (): void => {
-      this._currentPage = Math.max(this._currentPage - 1, START_PAGE_NUMBER);
+      this._currentPage = Math.max(this._currentPage - PAGES_PER_CLICK, START_PAGE_NUMBER);
       this.update();
     };
   }

@@ -5,6 +5,9 @@ import styles from '../paginator.module.scss';
 
 const NEXT_TITLE = 'next page';
 const PREVIOUS_TITLE = 'previous page';
+const CURRENT_PAGE_INITIAL = '1';
+const TOTAL_PAGES_INITIAL = '1';
+const SPLITTER = '/';
 
 type CreateViewReturn = {
   buttonNext: Button;
@@ -26,9 +29,9 @@ export const createView = (): CreateViewReturn => {
     title: PREVIOUS_TITLE,
   });
 
-  const currentPage = span({ className: styles.currentPage, text: '1' });
-  const totalPages = span({ className: styles.totalPages, text: '1' });
-  const splitter = span({ text: '/' });
+  const currentPage = span({ className: styles.currentPage, text: CURRENT_PAGE_INITIAL });
+  const totalPages = span({ className: styles.totalPages, text: TOTAL_PAGES_INITIAL });
+  const splitter = span({ text: SPLITTER });
 
   const counterWrapper = div(
     { className: styles.counterWrapper },
