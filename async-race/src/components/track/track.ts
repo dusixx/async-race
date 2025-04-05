@@ -20,15 +20,18 @@ type ShowStatusProps = {
   message: string;
   success?: boolean;
   icon?: string;
+  fontSize?: string;
 };
 
 export class Track extends Element<HTMLDivElement> {
   public car: Car;
+  public onStarted: (() => void) | null = null;
   private carName: Element<HTMLSpanElement>;
   private buttons: ButtonsMap;
   private carEditor: CarEditor = new CarEditor();
   private statusInfo: Element<HTMLSpanElement>;
   private overlay: Element<HTMLDivElement>;
+  private delayBeforeStart: Promise<void> | undefined;
 
   constructor(carData: CarData) {
     super({ className: styles.track });
@@ -59,24 +62,28 @@ export class Track extends Element<HTMLDivElement> {
     this.buttons.stop.node.click();
   }
 
-  public start(): void {
+  public start(delayBeforeStart?: Promise<void>): void {
     if (this.isReady) {
+      this.delayBeforeStart = delayBeforeStart;
       this.buttons.start.node.click();
     }
   }
 
-  public showStatus({ message, success, icon }: ShowStatusProps): void {
+  public showStatus({ message, success, icon, fontSize }: ShowStatusProps): void {
     const { style } = this.statusInfo.node;
     icon = icon || (success ? Icon.CheckMark : Icon.CrossMark);
     const color = success ? STATUS_SUCCESS_COLOR : STATUS_ERROR_COLOR;
 
     this.statusInfo.text = `${icon} ${message}`;
+    this.statusInfo.node.style.fontSize = fontSize ?? '';
     style.borderColor = color;
     this.overlay.toggleClass(styles.active, true);
   }
 
   private hideStatus(): void {
     this.overlay.toggleClass(styles.active, false);
+    this.statusInfo.node.style = '';
+    this.overlay.node.style = '';
   }
 
   private getTrackWidthPx(): number {
@@ -115,7 +122,7 @@ export class Track extends Element<HTMLDivElement> {
     start.onClick = (): void => {
       this.disableButtons(true);
       const trackDistancePx = this.getTrackWidthPx() - CAR_LEFT_PX;
-      void this.car.drive(trackDistancePx);
+      void this.car.drive(trackDistancePx, this.delayBeforeStart);
     };
   }
 
@@ -133,8 +140,14 @@ export class Track extends Element<HTMLDivElement> {
           this.dispatch(EventType.TrackRaceStarting);
           break;
         }
+        case 'started': {
+          this.hideStatus();
+          this.onStarted?.();
+          break;
+        }
         case 'stopped': {
           this.hideStatus();
+          this.delayBeforeStart = undefined;
           this.disableButtons(false, ['stop']);
           this.dispatch(EventType.TrackReady);
           break;
