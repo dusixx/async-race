@@ -1,5 +1,9 @@
 export enum EventType {
   BeforeContentChange = 'beforecontentchange',
+  TrackReady = 'trackready',
+  TrackRaceStarting = 'trackracestarting',
+  TrackRemove = 'trackremove',
+  TrackRaceFinished = 'trackracefinished',
 }
 
 export enum Icon {
@@ -12,11 +16,18 @@ export enum Icon {
   Unmuted = '🔊',
   Muted = '🔇',
   FourLeafClover = '🍀',
-  House = '🏠',
+  Home = '🏠',
   Wheel = '🎡',
   CrystalBall = '🔮',
   Pull8Ball = '🎱',
   Target = '🎯',
+  Next = '🡢',
+  Previous = '🡠',
+  Reward = '🏆',
+  Car = '🚘',
+  PointingUp = '☝️',
+  GameDie = '🎲',
+  CrossMark = '❌',
   CheckMark = '✔️',
 }
 
