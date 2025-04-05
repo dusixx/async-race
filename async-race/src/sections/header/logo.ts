@@ -1,11 +1,11 @@
 import { Element } from '../../components/base/element.ts';
 import { span } from '../../components/base/tags.ts';
-import { Icon } from '../../constants/index.ts';
+// import { Icon } from '../../constants/index.ts';
 import { getRndColorMixCss } from '../../utils/color.ts';
 
 import styles from './header.module.scss';
 
-const LOGO_TEXT = `Make#ur${Icon.Pull8Ball}Decision`;
+const LOGO_TEXT = `Async race`;
 const BASE_COLOR = '#ff33f7';
 
 export class Logo extends Element<HTMLDivElement> {
