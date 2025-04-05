@@ -85,29 +85,17 @@ export class Car {
     }
   }
 
-  public async drive(distancePx: number): Promise<void> {
+  public async drive(distancePx: number, delayBeforeStart?: Promise<void>): Promise<void> {
     await this.updateCarDataIfNecessary();
 
     const durationMs = await this.start();
     if (durationMs == null) {
       return;
     }
-    this.abortController = new AbortController();
-    void api.switchCarEngineToDriveMode(this.id, this.abortController.signal).then((result) => {
-      if (result === null) {
-        console.debug('drive mode aborted');
-        return;
-      }
-      this.status = result;
-      // NOTE: probably we will never get the "finished" status here -
-      // the "eased" animation will end faster
-      if (result === 'finished') {
-        this.updateStatus('finished');
-      } else {
-        // NOTE: might break before the animation starts
-        this.updateStatus('broken');
-      }
-    });
+    if (delayBeforeStart) {
+      await delayBeforeStart;
+    }
+    this._drive();
 
     this.startAnimation(durationMs, distancePx);
   }
@@ -151,6 +139,25 @@ export class Car {
     if (fireEvent) {
       this.onChangeStatus?.(status, this.stats);
     }
+  }
+
+  private _drive(): void {
+    this.abortController = new AbortController();
+    void api.switchCarEngineToDriveMode(this.id, this.abortController.signal).then((result) => {
+      if (result === null) {
+        console.debug('drive mode aborted');
+        return;
+      }
+      this.status = result;
+      // probably we will never get the "finished" status here -
+      // the "eased" animation will end faster
+      if (result === 'finished') {
+        this.updateStatus('finished');
+      } else {
+        // might break before the animation starts
+        this.updateStatus('broken');
+      }
+    });
   }
 
   private async start(): Promise<number | null> {
