@@ -1,75 +1,141 @@
-import { Icon } from '../../constants/index.ts';
-import type { CarData } from '../../services/api/types.ts';
 import { getRandomHexColor } from '../../utils/color.ts';
 import { getRandomCarName } from '../../utils/misc.ts';
+import type { Button } from '../base/button.ts';
 import type { Element } from '../base/element.ts';
 import { Car } from '../car/car.ts';
+import { isCarViewType } from '../car/utils/misc.ts';
 import { Modal } from '../modal/modal.ts';
 import { createView } from './utils/create-view.ts';
 
 const UPDATE_HEADING = 'Update car';
 const CREATE_HEADING = 'Add new car';
 
-const NOTE_TEXT = `${Icon.PointingUp} NOTE: we can only store the color and name on the server. 
-  So the car type and driver will be different after adding.
-  Only the color and name will be the same.
-`;
+// const NOTE_TEXT = `${Icon.PointingUp} NOTE: we can only store the color and name on the server.
+//   So the car type and driver will be different after adding.
+//   Only the color and name will be the same.
+// `;
 
 type OnCreateHnadler = (() => void) | null;
 
-type OnUpdateHandler = ((carData: Omit<CarData, 'id'>) => void) | null;
+type OnUpdateHandler = ((updatedCar: Car) => void) | null;
 
 export class CarEditor extends Modal {
   public onCreate: OnCreateHnadler = null;
   public onUpdate: OnUpdateHandler = null;
   private carColor: Element<HTMLInputElement>;
   private carName: Element<HTMLInputElement>;
+  private carType: Element<HTMLSelectElement>;
   private carView: Element<HTMLDivElement>;
   private heading: Element<HTMLSpanElement>;
-  private note: Element<HTMLParagraphElement>;
+  private randomName: Button;
   private currentCar: Car | null = null;
 
   constructor() {
-    const { wrapper, carColor, carName, carView, heading, note } = createView();
+    const { wrapper, colorInput, nameInput, carView, heading, typeSelect, randomName } =
+      createView();
     super({ content: wrapper, showCancelButton: true });
 
-    this.carColor = carColor;
-    this.carName = carName;
+    this.carColor = colorInput;
+    this.carName = nameInput;
+    this.carType = typeSelect;
     this.carView = carView;
     this.heading = heading;
-    this.note = note;
+    this.randomName = randomName;
 
     this.init();
   }
 
-  public update(car: Car): void {
-    this.heading.text = UPDATE_HEADING;
+  public showUpdateDialog(car: Car): void {
+    this.heading.text = car.id ? `${UPDATE_HEADING} #${car.id.toString()}` : UPDATE_HEADING;
 
     const { type, id, color, name } = car;
-    const carCopy = new Car({ id, name, color }, type);
+    const carCopy = new Car({ id, name, color, type });
 
-    this.currentCar = carCopy;
-    this.carView.append(carCopy.wrapper);
-    this.carName.node.value = name;
-    this.carColor.node.value = color;
+    this.updateCarView(carCopy);
 
     this.open();
   }
 
-  public create(): void {
+  public showCreateDialog(): void {
     this.heading.text = CREATE_HEADING;
 
-    const color = getRandomHexColor();
-    const name = getRandomCarName();
-    this.carColor.node.value = color;
-    this.carName.node.value = name;
-    this.note.text = NOTE_TEXT;
-
-    const carCopy = new Car({ name, color });
-    this.currentCar = carCopy;
-    this.carView.append(carCopy.wrapper);
+    const car = new Car({
+      name: getRandomCarName(),
+      color: getRandomHexColor(),
+    });
+    this.updateCarView(car);
 
     this.open();
+  }
+
+  private updateCarView(car: Car): void {
+    this.currentCar = car;
+
+    this.carColor.node.value = car.color;
+    this.carName.node.value = car.name;
+    this.carType.node.value = car.type;
+
+    this.carView.removeChildren();
+    this.carView.append(car.wrapper);
+  }
+
+  private updateCarData(): void {
+    if (this.currentCar) {
+      this.currentCar.name = this.carName.node.value;
+
+      this.currentCar
+        .updateCarData()
+        .then((status) => {
+          console.debug(status);
+          if (status === 'created') {
+            this.onCreate?.();
+          } else {
+            if (this.currentCar) {
+              this.onUpdate?.(this.currentCar);
+            }
+          }
+        })
+        .catch(console.debug);
+    }
+  }
+
+  private addOnCloseHandler(): void {
+    this.onClose = (result): void => {
+      this.carView.removeChildren();
+      if (result === 'confirmed') {
+        this.updateCarData();
+      }
+    };
+  }
+
+  private addCarNameFocusHandler(): void {
+    this.carName.addListener('focus', () => {
+      this.carName.node.select();
+    });
+  }
+
+  private addCarTypeChangeHandler(): void {
+    this.carType.addListener('change', ({ target }: Event) => {
+      if (target instanceof HTMLSelectElement) {
+        const { value } = target;
+        const { id, type: currentType } = this.currentCar ?? {};
+
+        const newType = isCarViewType(value) ? value : currentType;
+        const color = this.carColor.node.value;
+        const name = this.carName.node.value || this.currentCar?.name;
+
+        if (newType !== currentType) {
+          const newCarView = new Car({ id, color, name, type: newType });
+          this.updateCarView(newCarView);
+        }
+      }
+    });
+  }
+
+  private addRandomNameClickHandler(): void {
+    this.randomName.onClick = (): void => {
+      this.carName.node.value = getRandomCarName();
+    };
   }
 
   private addColorChangeHandler(): void {
@@ -86,47 +152,12 @@ export class CarEditor extends Modal {
     };
   }
 
-  private updateCar(): void {
-    if (this.currentCar) {
-      this.currentCar.name = this.carName.node.value;
-
-      const carData = {
-        color: this.currentCar.color,
-        name: this.currentCar.name,
-      };
-      this.currentCar
-        .updateCarData()
-        .then((status) => {
-          if (status === 'created') {
-            this.onCreate?.();
-          } else {
-            this.onUpdate?.(carData);
-          }
-        })
-        .catch(console.debug);
-    }
-  }
-
-  private addOnCloseHandler(): void {
-    this.onClose = (result): void => {
-      this.carView.removeChildren();
-      this.note.text = '';
-      if (result === 'confirmed') {
-        this.updateCar();
-      }
-    };
-  }
-
-  private addCarNameFocusHandler(): void {
-    this.carName.addListener('focus', () => {
-      this.carName.node.select();
-    });
-  }
-
   private init(): void {
     this.addOnBeforeConfirmHandler();
     this.addColorChangeHandler();
     this.addOnCloseHandler();
     this.addCarNameFocusHandler();
+    this.addCarTypeChangeHandler();
+    this.addRandomNameClickHandler();
   }
 }
