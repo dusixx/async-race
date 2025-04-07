@@ -47,16 +47,22 @@ export class Winners extends Element {
   private async fetchWinnersData(pageNumber?: number): Promise<void> {
     pageNumber = pageNumber || DEFAULT_PAGE_NUMBER;
 
-    const { items, totalCount } = await api.getAllWinners({
-      _limit: WINNERS_PER_PAGE,
-      _page: pageNumber,
-      _sort: this.sortColumn,
-      _order: this.sortOrder,
-    });
-    this.winnersCounter.text = totalCount.toString();
-    this.paginator.totalItems = totalCount;
-    this.paginator.currentPage = pageNumber;
-    void this.updateTableContent(items);
+    try {
+      const { items, totalCount } = await api.getAllWinners({
+        _limit: WINNERS_PER_PAGE,
+        _page: pageNumber,
+        _sort: this.sortColumn,
+        _order: this.sortOrder,
+      });
+      this.winnersCounter.text = totalCount.toString();
+      this.paginator.totalItems = totalCount;
+      this.paginator.currentPage = pageNumber;
+      void this.updateTableContent(items);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.debug(`fetchWinnersData: ${error.message}`);
+      }
+    }
   }
 
   private async updateTableContent(items: WinnerData[]): Promise<void> {

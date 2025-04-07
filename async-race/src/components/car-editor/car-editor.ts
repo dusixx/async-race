@@ -90,7 +90,11 @@ export class CarEditor extends Modal {
             }
           }
         })
-        .catch(console.debug);
+        .catch((error: unknown) => {
+          if (error instanceof Error) {
+            console.debug(`updateCarData: ${error.message}`);
+          }
+        });
     }
   }
 

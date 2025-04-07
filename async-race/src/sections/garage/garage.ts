@@ -92,15 +92,21 @@ export class Garage extends Element {
   private async fetchCarsData(pageNumber?: number): Promise<void> {
     pageNumber = pageNumber || DEFAULT_PAGE_NUMBER;
 
-    const { items, totalCount } = await api.getAllCars({
-      _limit: TRACKS_PER_PAGE,
-      _page: pageNumber,
-    });
-    this.updateCurrentTracks(items);
-    this.totalCounter.text = totalCount.toString();
-    this.paginator.totalItems = totalCount;
-    this.paginator.currentPage = pageNumber;
-    this.disableButtons(false, ['reset']);
+    try {
+      const { items, totalCount } = await api.getAllCars({
+        _limit: TRACKS_PER_PAGE,
+        _page: pageNumber,
+      });
+      this.updateCurrentTracks(items);
+      this.totalCounter.text = totalCount.toString();
+      this.paginator.totalItems = totalCount;
+      this.paginator.currentPage = pageNumber;
+      this.disableButtons(false, ['reset']);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.debug(`fetchCarsData: ${error.message}`);
+      }
+    }
   }
 
   private updateCurrentTracks(carsData: CarData[]): void {
@@ -180,8 +186,14 @@ export class Garage extends Element {
   }
 
   private async generateCarsAndRefetch(): Promise<void> {
-    await api.createCars(CARS_PER_GENERATION);
-    await this.fetchCarsData(this.paginator.currentPage);
+    try {
+      await api.createCars(CARS_PER_GENERATION);
+      await this.fetchCarsData(this.paginator.currentPage);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.debug(`generateCarsAndRefetch: ${error.message}`);
+      }
+    }
   }
 
   private addGenerateClickHandler(): void {
