@@ -20,14 +20,8 @@ export class MainSection extends Element {
     this.append(content);
   }
 
-  private handleRouteChange = ({ pathname, component }: Route): void => {
+  private handleRouteChange = ({ component }: Route): void => {
     this.dispatch(EventType.BeforeContentChange);
-
-    console.debug(pathname);
-    // if (Router.isPathnamesEqual(pathname, Pathname.DecisionPicker) && !isOptionsDataValid()) {
-    //   this.router.navigate(Pathname.OptionList);
-    //   return;
-    // }
     this.setContent(component(this.router));
   };
 }
