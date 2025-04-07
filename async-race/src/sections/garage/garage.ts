@@ -140,12 +140,12 @@ export class Garage extends Element {
   };
 
   private addTrackStatusChangeListeners(): void {
-    this.addListener(EventType.TrackRaceStarting, this.handleTrackStatusChange);
-    this.addListener(EventType.TrackReady, this.handleTrackStatusChange);
+    this.addListener(EventType.TrackStarting, this.handleTrackStatusChange);
+    this.addListener(EventType.TrackStopped, this.handleTrackStatusChange);
   }
 
-  private addTrackRaceFinishedListener(): void {
-    this.addListener(EventType.TrackRaceFinished, ({ target }) => {
+  private addTrackFinishedListener(): void {
+    this.addListener(EventType.TrackFinished, ({ target }) => {
       if (this.status !== 'race') {
         return;
       }
@@ -251,7 +251,7 @@ export class Garage extends Element {
 
     this.addGenerateClickHandler();
     this.addTrackStatusChangeListeners();
-    this.addTrackRaceFinishedListener();
+    this.addTrackFinishedListener();
     this.addTrackRemoveListener();
     this.addResetClickHandler();
     this.addRaceClickHandler();

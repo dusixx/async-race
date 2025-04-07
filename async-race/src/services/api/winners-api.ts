@@ -5,7 +5,6 @@ import { isWinnerData, isWinnerDataArray } from './utils/index.ts';
 
 const ERR_CREATE_DATA_REQUIRED = `all properties are required`;
 const ERR_UPDATE_DATA_REQUIRED = `'wins' and 'time' are required`;
-const ERR_INVALID_DATA = `invalid data format`;
 
 export async function getWinnersTotalCount(): Promise<number> {
   const response = await fetchData(Endpoint.Winners, { _limit: 0 });
@@ -46,7 +45,7 @@ export async function createWinner(winnerData: WinnerData): Promise<boolean> {
   }
   const data: unknown = await response?.json();
   if (!isWinnerData(data)) {
-    throw TypeError(ERR_INVALID_DATA);
+    return false;
   }
   return true;
 }
@@ -62,7 +61,7 @@ export async function deleteWinner(id: number): Promise<boolean> {
 export async function updateWinner(
   id: number,
   winnerData: Omit<WinnerData, 'id'>
-): Promise<WinnerData> {
+): Promise<WinnerData | null> {
   if (!winnerData.time || !winnerData.wins) {
     throw Error(ERR_UPDATE_DATA_REQUIRED);
   }
@@ -76,7 +75,7 @@ export async function updateWinner(
   });
   const data: unknown = await response?.json();
   if (!isWinnerData(data)) {
-    throw TypeError(ERR_INVALID_DATA);
+    return null;
   }
   return data;
 }

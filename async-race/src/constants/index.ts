@@ -2,10 +2,10 @@ export enum EventType {
   BeforeContentChange = 'beforecontentchange',
   BeforeNavigateWinners = 'beforenavigatewinners',
   BeforeNavigateGarage = 'beforenavigategarage',
-  TrackRaceStarting = 'trackracestarting',
-  TrackRaceStarted = 'trackracestarted',
-  TrackRaceFinished = 'trackracefinished',
-  TrackReady = 'trackready',
+  TrackStarting = 'trackstarting',
+  TrackStarted = 'trackstarted',
+  TrackFinished = 'trackfinished',
+  TrackStopped = 'trackstopped',
   TrackRemove = 'trackremove',
 }
 

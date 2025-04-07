@@ -102,7 +102,7 @@ export class Car {
 
   public async stop(): Promise<void> {
     // abort current request (started or drive)
-    this.abortController?.abort(null);
+    this.abortController?.abort();
     this.updateStatus('stopping');
 
     await this.updateCarDataIfNecessary();
@@ -112,15 +112,18 @@ export class Car {
     this.updateStatus('stopped');
   }
 
-  public async updateCarData(): Promise<UpdateStatus> {
+  public async updateCarData(): Promise<UpdateStatus | null> {
     const carData = {
       name: this.name,
       color: this.color,
       type: this.type,
     };
     if (!this.isExists) {
-      const { id } = await api.createCar(carData);
-      this._id = id;
+      const data = await api.createCar(carData);
+      if (!data) {
+        return null;
+      }
+      this._id = data.id;
       return 'created';
     } else {
       await api.updateCar(this._id, carData);
@@ -207,7 +210,7 @@ export class Car {
 
       if (progress >= ANIMATION_PROGRESS_THRESHOLD) {
         // abort drive mode
-        this.abortController?.abort(null);
+        this.abortController?.abort();
         this.updateStatus('finished');
       }
       if (this.status !== 'started') {

@@ -41,10 +41,6 @@ export async function fetchData(
     url += `?${createQueryString(queryParameters)}`;
   }
   // console.debug(init?.method ?? 'GET', url.replace(BASE_URL, ''));
-  try {
-    return await fetch(url, init);
-  } catch (error) {
-    console.debug(error);
-    return null;
-  }
+
+  return await fetch(url, init);
 }

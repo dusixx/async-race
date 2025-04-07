@@ -20,7 +20,6 @@ import {
 
 const ERR_ALL_REQUIRED = `all fields except 'id' are required`;
 const ERR_ONE_REQUIRED = `at least one field is required`;
-const ERR_INVALID_DATA = `invalid data format`;
 
 export async function getCarsTotalCount(): Promise<number> {
   const response = await fetchData(Endpoint.Cars, { _limit: 0 });
@@ -45,7 +44,7 @@ export async function getCar(id: number): Promise<CarData | null> {
   return isCarData(data) ? data : null;
 }
 
-export async function createCar(carData: Omit<CarData, 'id'>): Promise<CarData> {
+export async function createCar(carData: Omit<CarData, 'id'>): Promise<CarData | null> {
   if (!carData.color || !carData.name) {
     throw Error(ERR_ALL_REQUIRED);
   }
@@ -58,7 +57,7 @@ export async function createCar(carData: Omit<CarData, 'id'>): Promise<CarData> 
   });
   const data: unknown = await response?.json();
   if (!isCarData(data)) {
-    throw TypeError(ERR_INVALID_DATA);
+    return null;
   }
   return data;
 }
@@ -75,7 +74,7 @@ export async function deleteCar(id: number): Promise<boolean> {
 export async function updateCar(
   id: number,
   carData: Partial<Omit<CarData, 'id'>>
-): Promise<CarData> {
+): Promise<CarData | null> {
   if (!carData.color || !carData.name || !carData.type) {
     throw Error(ERR_ONE_REQUIRED);
   }
@@ -89,7 +88,7 @@ export async function updateCar(
   });
   const data: unknown = await response?.json();
   if (!isCarData(data)) {
-    throw TypeError(ERR_INVALID_DATA);
+    return null;
   }
   return data;
 }
@@ -110,7 +109,7 @@ export async function updateCarEngineStatus(
     );
     const data: unknown = await response?.json();
     if (!isCarVelocityAndDistance(data)) {
-      throw TypeError(ERR_INVALID_DATA);
+      return null;
     }
     return data;
   } catch (error) {

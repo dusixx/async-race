@@ -59,17 +59,23 @@ export class Track extends Element<HTMLDivElement> {
   }
 
   public get isReady(): boolean {
-    return !this.buttons.start.disabled;
+    return this.car.status === 'stopped';
+  }
+
+  private get isRaceOn(): boolean {
+    return Boolean(this.delayBeforeStart);
   }
 
   public reset(): void {
-    this.buttons.stop.node.click();
+    if (this.car.status !== 'stopped') {
+      this.handleStopClick();
+    }
   }
 
   public start(delayBeforeStart?: Promise<void>): void {
     if (this.isReady) {
       this.delayBeforeStart = delayBeforeStart;
-      this.buttons.start.node.click();
+      this.handleStartClick();
     }
   }
 
@@ -119,21 +125,25 @@ export class Track extends Element<HTMLDivElement> {
     };
   }
 
+  private handleStopClick = (): void => {
+    this.disableButtons(true);
+    void this.car.stop();
+  };
+
   private addStopClickHandler(): void {
     const { stop } = this.buttons;
-    stop.onClick = (): void => {
-      this.disableButtons(true);
-      void this.car.stop();
-    };
+    stop.onClick = this.handleStopClick;
   }
+
+  private handleStartClick = (): void => {
+    this.disableButtons(true);
+    const trackDistancePx = this.getTrackWidthPx() - CAR_LEFT_PX;
+    void this.car.drive(trackDistancePx, this.delayBeforeStart);
+  };
 
   private addStartClickHandler(): void {
     const { start } = this.buttons;
-    start.onClick = (): void => {
-      this.disableButtons(true);
-      const trackDistancePx = this.getTrackWidthPx() - CAR_LEFT_PX;
-      void this.car.drive(trackDistancePx, this.delayBeforeStart);
-    };
+    start.onClick = this.handleStartClick;
   }
 
   private addCarChangeStatusHandler(): void {
@@ -146,8 +156,8 @@ export class Track extends Element<HTMLDivElement> {
           break;
         }
         case 'starting': {
-          stop.disabled = false;
-          this.dispatch(EventType.TrackRaceStarting);
+          stop.disabled = this.isRaceOn;
+          this.dispatch(EventType.TrackStarting);
           break;
         }
         case 'started': {
@@ -159,14 +169,14 @@ export class Track extends Element<HTMLDivElement> {
           this.hideStatus();
           this.delayBeforeStart = undefined;
           this.disableButtons(false, ['stop']);
-          this.dispatch(EventType.TrackReady);
+          this.dispatch(EventType.TrackStopped);
           this.onStopped?.();
           break;
         }
         case 'finished': {
           const time = getFinishingTimeSecs(this.car.stats).toString();
           this.showStatus({ message: `finished in ${time}`, success: true });
-          this.dispatch(EventType.TrackRaceFinished);
+          this.dispatch(EventType.TrackFinished);
         }
       }
     };
