@@ -1,11 +1,15 @@
 import { Button } from '../../../components/base/button.ts';
-import { div, span } from '../../../components/base/index.ts';
+import { div, img, span } from '../../../components/base/index.ts';
 import { Paginator } from '../../../components/paginator/paginator.ts';
+import type { Track } from '../../../components/track/track.ts';
 import { Icon } from '../../../constants/index.ts';
 
 import styles from '../garage.module.scss';
+import { getFinishingTimeSecs } from './misc.ts';
 
-// TODO: refactor!
+const WINNER_IMAGE_SRC = './reward.png';
+const TOTAL_CARS_TEXT = 'cars total:';
+
 const buttonsData = {
   race: `${Icon.Rocket} race`,
   reset: 'reset',
@@ -13,11 +17,36 @@ const buttonsData = {
   add: 'add ',
 };
 
-const TOTAL_CARS_TEXT = 'cars total:';
+export type ButtonsMap = Record<string, Button>;
 
-type ButtonsMap = Record<string, Button>;
+export const getWinnerInfoDetailsMarkup = (targetTrack: Track): string => {
+  const { car } = targetTrack;
+  const time = getFinishingTimeSecs(car.stats).toString();
+  return `
+    <div class="${styles.winnerInfo}">
+      <p class="${styles.winnerName}">${car.name}</p>
+      <div class="${styles.winnerDetails}">
+        <span>${time}s</span>
+        <span>(${car.type})</span>
+      </div>
+    </div>
+  `;
+};
 
-const createButtons = (): ButtonsMap => {
+export const createWinnerModalView = (): {
+  winnerInfoWrapper: ReturnType<typeof div>;
+  winnerInfo: ReturnType<typeof div>;
+} => {
+  const winnerInfoWrapper = div({ className: styles.winnerInfoWrapper });
+  const image = img({ className: styles.winnerImage, src: WINNER_IMAGE_SRC, alt: 'reward' });
+  const winnerInfo = div({ className: styles.winnerInfo });
+
+  winnerInfoWrapper.append(image, winnerInfo);
+
+  return { winnerInfoWrapper, winnerInfo };
+};
+
+const createButtonsMap = (): ButtonsMap => {
   const buttonsMap: ButtonsMap = {};
 
   Object.entries(buttonsData).map(([name, text]) => {
@@ -57,7 +86,7 @@ export const createView = (): {
     totalCarsCounter
   );
 
-  const buttonsMap = createButtons();
+  const buttonsMap = createButtonsMap();
   const paginator = new Paginator();
 
   rightControls.append(buttonsMap.add, buttonsMap.generate, paginator);

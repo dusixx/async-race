@@ -1,14 +1,19 @@
 import { Element } from '../../components/base/element.ts';
 import { CarEditor } from '../../components/car-editor/car-editor.ts';
+import { Modal } from '../../components/modal/modal.ts';
 import type { Paginator } from '../../components/paginator/paginator.ts';
 import { Track } from '../../components/track/track.ts';
-import type { ButtonsMap } from '../../components/track/utils/create-view.ts';
-import { EventType, Icon } from '../../constants/index.ts';
+import { EventType } from '../../constants/index.ts';
 import * as api from '../../services/api/index.ts';
 import type { CarData } from '../../services/api/types.ts';
 
-import { createView } from './utils/create-view.ts';
-import { getFinishingTimeSecs, showWinner } from './utils/misc.ts';
+import type { ButtonsMap } from './utils/create-view.ts';
+import {
+  createView,
+  createWinnerModalView,
+  getWinnerInfoDetailsMarkup,
+} from './utils/create-view.ts';
+import { showWinnerStatus, updateScore } from './utils/misc.ts';
 
 const TRACKS_PER_PAGE = 7;
 const DEFAULT_PAGE_NUMBER = 1;
@@ -22,8 +27,10 @@ export class Garage extends Element {
   private tracksMap: Map<HTMLElement, Track> = new Map();
   private tracksWrapper: Element<HTMLDivElement>;
   private totalCounter: Element<HTMLSpanElement>;
-  private paginator: Paginator;
   private carEditor: CarEditor = new CarEditor();
+  private winnerInfo: Element<HTMLDivElement>;
+  private paginator: Paginator;
+  private modal: Modal;
 
   constructor() {
     super({ tag: 'section' });
@@ -37,16 +44,39 @@ export class Garage extends Element {
     this.paginator = paginator;
     paginator.itemsPerPage = TRACKS_PER_PAGE;
 
+    const { winnerInfo, winnerInfoWrapper } = createWinnerModalView();
+    this.modal = new Modal({
+      showCancelButton: false,
+      // .node to prevent call removeChildByRef until the BaseElement is fixed
+      parent: this.node,
+      content: winnerInfoWrapper,
+    });
+    this.winnerInfo = winnerInfo;
+
     this.append(wrapper);
     this.init();
 
     void this.fetchCarsData();
   }
 
-  private async waitUntilEveryoneIsReadyToGo(): Promise<void> {
+  private showWinnerModal(targetTrack: Track): void {
+    const { winnerInfo } = this;
+    const details = getWinnerInfoDetailsMarkup(targetTrack);
+
+    winnerInfo.node.innerHTML = '';
+    winnerInfo.node.insertAdjacentHTML('beforeend', details);
+
+    this.modal.open();
+  }
+
+  private async waitUntilAllCarsReadyToGo(): Promise<void> {
     const onStarted = [...this.tracksMap.values()].map((track) => {
       return new Promise((resolve) => {
         track.onStarted = (): void => {
+          resolve(null);
+        };
+        // if stopped before 'started'
+        track.onStopped = (): void => {
           resolve(null);
         };
       });
@@ -70,6 +100,7 @@ export class Garage extends Element {
     this.totalCounter.text = totalCount.toString();
     this.paginator.totalItems = totalCount;
     this.paginator.currentPage = pageNumber;
+    this.disableButtons(false, ['reset']);
   }
 
   private updateCurrentTracks(carsData: CarData[]): void {
@@ -102,7 +133,7 @@ export class Garage extends Element {
     this.disableButtons(!areAllTracksReady, ['reset']);
     this.paginator.disabled = !areAllTracksReady;
 
-    // if reset already was pressed, leave it disabled
+    // if reset already was pressed, leave reset disabled
     if (this.status === 'resetting') {
       reset.disabled = true;
     }
@@ -122,13 +153,10 @@ export class Garage extends Element {
         const targetTrack = this.tracksMap.get(target);
         if (targetTrack) {
           this.status = 'needReset';
-          const time = getFinishingTimeSecs(targetTrack.car.stats).toString();
-          targetTrack.showStatus({
-            message: `won in ${time}`,
-            success: true,
-            icon: Icon.Reward,
-          });
-          showWinner(targetTrack, this);
+
+          void updateScore(targetTrack);
+          showWinnerStatus(targetTrack);
+          this.showWinnerModal(targetTrack);
         }
       }
     });
@@ -185,7 +213,7 @@ export class Garage extends Element {
       this.status = 'race';
       race.disabled = true;
 
-      const delayBeforeStart = this.waitUntilEveryoneIsReadyToGo();
+      const delayBeforeStart = this.waitUntilAllCarsReadyToGo();
       this.tracksMap.forEach((track) => {
         track.start(delayBeforeStart);
       });

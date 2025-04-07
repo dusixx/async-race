@@ -6,6 +6,8 @@
 
 .button {
   @extend %btn-primary;
+
+  height: 40px;
 }
 
 .race {
@@ -14,7 +16,7 @@
 
 .reset,
 .race {
-  width: 120px;
+  width: 110px;
 }
 
 .add {
@@ -43,13 +45,7 @@
 }
 
 .header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
-
-  margin-bottom: 25px;
-  border-radius: 40px;
+  @extend %section-header;
 }
 
 .total-cars-wrapper {
@@ -58,12 +54,51 @@
   align-items: center;
   justify-content: center;
 
-  font-size: 15px;
+  font-size: 14px;
   text-transform: capitalize;
+}
 
-  opacity: 0.5;
+.winner-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
 
-  span:last-of-type {
-    // min-width: 30px;
-  }
+.winner-image {
+  display: block;
+  width: 80%;
+  height: auto;
+}
+
+.winner-heading {
+  font-size: 28px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.winner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+
+  font-size: 14px;
+}
+
+.winner-details {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.winner-name {
+  width: 100%;
+
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: -0.2px;
+  word-wrap: break-word;
 }

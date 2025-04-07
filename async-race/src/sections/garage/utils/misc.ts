@@ -1,7 +1,6 @@
-import type { Element } from '../../../components/base/element.ts';
 import type { CarStats } from '../../../components/car/car.ts';
-import { showModalMessage } from '../../../components/modal/utils/show-modal-message.ts';
 import type { Track } from '../../../components/track/track.ts';
+import { Icon } from '../../../constants/index.ts';
 import * as api from '../../../services/api/index.ts';
 import type { WinnerData } from '../../../services/api/types.ts';
 
@@ -10,7 +9,7 @@ export const getFinishingTimeSecs = (stats: CarStats): number => {
   return parseFloat((timeMs / 1000).toFixed(3));
 };
 
-async function updateScore(targetTrack: Track): Promise<WinnerData> {
+export async function updateScore(targetTrack: Track): Promise<WinnerData> {
   const { car } = targetTrack;
   const { id } = car;
 
@@ -29,7 +28,11 @@ async function updateScore(targetTrack: Track): Promise<WinnerData> {
   return data;
 }
 
-export function showWinner(targetTrack: Track, parent?: HTMLElement | Element): void {
-  showModalMessage(`WINNER: ${targetTrack.car.name} -- ${targetTrack.car.type}`, parent);
-  void updateScore(targetTrack);
+export function showWinnerStatus(targetTrack: Track): void {
+  const time = getFinishingTimeSecs(targetTrack.car.stats).toString();
+  targetTrack.showStatus({
+    message: `won in ${time}`,
+    success: true,
+    icon: Icon.Reward,
+  });
 }
