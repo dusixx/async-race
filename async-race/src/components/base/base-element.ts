@@ -67,7 +67,7 @@ export class BaseElement<T extends HTMLElement = HTMLElement> {
     this.node.remove();
   }
 
-  // TODO: removeChildren should remove only children without touching their descendants
+  // TODO: removeChildren should remove only children - not descendants
   public removeChildren(): void {
     this.children.forEach((child) => {
       child.remove();
