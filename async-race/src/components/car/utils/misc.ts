@@ -2,17 +2,21 @@ import bear from '../../../data/cars/bear.ts';
 import fox from '../../../data/cars/fox.ts';
 import monkey from '../../../data/cars/monkey.ts';
 import piggy from '../../../data/cars/piggy.ts';
+import turtle from '../../../data/cars/turtle.ts';
+import wolf from '../../../data/cars/wolf.ts';
 import { rndInt } from '../../../utils/misc.ts';
 
 const DEFAULT_CAR_TYPE = 'bear';
 
-export type CarViewType = 'bear' | 'fox' | 'monkey' | 'piggy';
+export type CarViewType = 'bear' | 'fox' | 'monkey' | 'piggy' | 'wolf' | 'turtle';
 
 export const CAR_TYPE: Record<CarViewType, string> = {
   bear,
   fox,
   monkey,
   piggy,
+  wolf,
+  turtle,
 };
 
 export const isCarViewType = (key: string): key is CarViewType => {

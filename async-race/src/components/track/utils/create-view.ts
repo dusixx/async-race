@@ -6,15 +6,12 @@ import styles from '../track.module.scss';
 
 const ICONS_FILE_PATH = './icons-2.svg';
 
-// TODO: refactor
 const buttonsData = {
   start: 'start',
   stop: 'stop',
   update: 'edit-3',
   remove: 'remove',
 };
-
-// type
 
 export type ButtonsMap = Record<string, Button>;
 

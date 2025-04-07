@@ -6,7 +6,7 @@ import { scrollLock } from './utils/scroll-lock.js';
 import { KeyboardEventKey, Visibility } from '../../constants/index.js';
 import { isKeyPressed } from '../../utils/misc.js';
 import type { ModalContent, ModalProps, ModalResult, OnCloseModalHandler } from './types.js';
-import { createElements } from './utils/create-elements.js';
+import { createView } from './utils/create-view.js';
 
 import styles from './modal.module.scss';
 
@@ -29,7 +29,7 @@ export class Modal extends Element<HTMLDivElement> {
   }: ModalProps) {
     super({ className: styles.backdrop });
 
-    const { contentContainer, okButton, cancelButton, modalRoot } = createElements();
+    const { contentContainer, okButton, cancelButton, modalRoot } = createView();
 
     this._root = modalRoot;
     this.contentRoot = contentContainer;
@@ -76,6 +76,7 @@ export class Modal extends Element<HTMLDivElement> {
     this.cancelButton.node.style.display = flag ? '' : Visibility.None;
   }
 
+  // "_init" to prevent collisions with descendants implementing "init"
   private _init(): void {
     this.addListener('click', (event) => {
       this.handleBackdropClick(event);
@@ -99,7 +100,7 @@ export class Modal extends Element<HTMLDivElement> {
       }
       result = target === okButton.node ? 'confirmed' : 'cancelled';
       if (result === 'confirmed') {
-        // cancelled for some reasons
+        // cancelled by user
         if (onBeforeConfirm && !onBeforeConfirm()) {
           return;
         }
@@ -140,7 +141,6 @@ export class Modal extends Element<HTMLDivElement> {
     scrollLock.toggle(false);
     document.removeEventListener('keydown', this.handleDocumentKeydown);
     this.toggleClass(styles.active, false);
-    // wait for transition ending
     this.addListener(
       'transitionend',
       () => {

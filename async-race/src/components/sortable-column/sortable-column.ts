@@ -7,8 +7,10 @@ export type SortOrder = 'asc' | 'desc';
 
 type Props = Omit<BaseElementProps<HTMLLIElement>, 'tag'>;
 
+type OnChangeHandler = ((order: SortOrder) => void) | null;
+
 export class SortableColumn extends Element<HTMLLIElement> {
-  public onChange: ((order: SortOrder) => void) | null = null;
+  public onChange: OnChangeHandler = null;
   private _sortOrder: SortOrder = 'asc';
   private marker: ReturnType<typeof span>;
 
@@ -45,11 +47,10 @@ export class SortableColumn extends Element<HTMLLIElement> {
 
   private init(): void {
     this.addListener('click', () => {
-      // reveal on click and keep order as is
+      // reveal on click
       if (!this.isMarkerVisible) {
         this.showMarker(true);
         this.onChange?.(this.sortOrder);
-        // return;
       }
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     });

@@ -3,7 +3,7 @@ import styles from '../car.module.scss';
 import type { CarViewType } from './misc.ts';
 import { CAR_TYPE, getRandomCarViewType } from './misc.ts';
 
-const CAR_SHADOW_OPACITY = '0.5';
+const SHADOW_OPACITY = '0.5';
 
 export enum ColorCSSVariableName {
   Body = '--color-body',
@@ -43,7 +43,7 @@ export const createView = (color: string, type: CarViewType | undefined): Create
   const shadow = svgElement.querySelector<HTMLElement>(CarViewSelector.Shadow);
 
   if (shadow) {
-    shadow.style.opacity = CAR_SHADOW_OPACITY;
+    shadow.style.opacity = SHADOW_OPACITY;
   }
 
   if (!rightWheel || !leftWheel) {

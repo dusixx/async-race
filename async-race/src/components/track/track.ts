@@ -88,8 +88,7 @@ export class Track extends Element<HTMLDivElement> {
 
   private hideStatus(): void {
     this.overlay.toggleClass(styles.active, false);
-    this.statusInfo.node.style = '';
-    this.overlay.node.style = '';
+    this.statusInfo.node.style.backgroundColor = '';
   }
 
   private getTrackWidthPx(): number {

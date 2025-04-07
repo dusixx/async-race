@@ -5,14 +5,24 @@ import { CAR_TYPE } from '../../car/utils/misc.ts';
 
 import styles from '../car-editor.module.scss';
 
-const MAX_CAR_NAME_LEN = 150;
 const MIN_CAR_NAME_LEN = 2;
+const MAX_CAR_NAME_LEN = 150;
 const TYPE_SELECT_ID = 'car-type';
 const COLOR_INPUT_ID = 'car-color';
 const TYPE_LABEL_TEXT = 'Driver:';
 const COLOR_LABEL_TEXT = 'Color:';
 const RANDOM_NAME_BUTTON_TEXT = Icon.GameDie;
 const RANDOM_NAME_BUTTON_TITLE = 'random name';
+
+type CreateViewReturn = {
+  wrapper: ReturnType<typeof div>;
+  carView: ReturnType<typeof div>;
+  nameInput: ReturnType<typeof input>;
+  colorInput: ReturnType<typeof input>;
+  typeSelect: ReturnType<typeof select>;
+  heading: ReturnType<typeof span>;
+  randomName: Button;
+};
 
 const createTypeSelectWrapper = (): {
   typeSelectWrapper: ReturnType<typeof div>;
@@ -71,16 +81,6 @@ const createNameInputWrapper = (): {
   const nameInputWrapper = div({ className: styles.nameInputWrapper }, nameInput, randomName);
 
   return { nameInputWrapper, nameInput, randomName };
-};
-
-type CreateViewReturn = {
-  wrapper: ReturnType<typeof div>;
-  carView: ReturnType<typeof div>;
-  nameInput: ReturnType<typeof input>;
-  colorInput: ReturnType<typeof input>;
-  typeSelect: ReturnType<typeof select>;
-  heading: ReturnType<typeof span>;
-  randomName: Button;
 };
 
 export const createView = (): CreateViewReturn => {

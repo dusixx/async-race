@@ -1,3 +1,6 @@
+$finish-image-url: './finish.png';
+$landscape-image-url: './landscape.png';
+
 .track {
   position: relative;
 
@@ -5,18 +8,14 @@
   display: flex;
 
   height: var(--track-height);
-
-  // box-shadow: var(--box-shadow);
-
-  // border: 1px dashed rgb(198 211 227);
   border-radius: 20px;
 
-  background: url('./ls2.png');
+  background:
+    url($finish-image-url) right 30px bottom 35px,
+    url($landscape-image-url);
   background-color: rgb(255 255 255);
-  background-repeat: no-repeat;
-
-  // background-position: bottom -30px right 0;
-  background-size: cover;
+  background-repeat: no-repeat, no-repeat;
+  background-size: 190px, cover;
 }
 
 .car-position {
@@ -45,7 +44,11 @@
 }
 
 .stop {
-  // background-color: var(--color-accent);
+  display: flex;
+}
+
+.update {
+  background-color: var(--color-btn-bg-sec);
 }
 
 .buttons {
@@ -70,12 +73,10 @@
   padding: var(--track-header-padding);
   padding-right: 10px;
   padding-left: var(--track-header-padding-left);
-  border: 1px solid rgb(208 238 255);
+  border: 1px solid rgb(203 221 255);
   border-radius: var(--border-radius);
 
   background-color: white;
-
-  // box-shadow: var(--box-shadow);
 }
 
 .overlay {
@@ -98,31 +99,6 @@
   @include main-transition('opacity, visibility');
 }
 
-// .status-info {
-//   transform: scale(0.6);
-
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-
-//   min-width: 160px;
-//   padding: 6px 0;
-//   padding-top: 5px;
-//   border: 1px solid transparent;
-//   border-radius: var(--border-radius);
-
-//   font-size: 13px;
-//   color: white;
-//   text-transform: lowercase;
-
-//   opacity: 0.5;
-//   background-color: rgb(255 255 255 / 90%);
-
-//   @include main-transition('transform');
-
-//   // animation: blinker 1s ease-in-out infinite alternate;
-// }
-
 .status-info {
   transform: scale(0.6);
 
@@ -135,8 +111,6 @@
   opacity: 0.5;
 
   @include main-transition('transform');
-
-  // animation: blinker 1s ease-in-out infinite alternate;
 }
 
 .status-icon {
@@ -150,6 +124,8 @@
 
   font-size: 16px;
   color: white;
+
+  // animation: pulse 2s ease-in-out infinite alternate;
 }
 
 .status-text {
@@ -174,8 +150,12 @@
   }
 }
 
-// @keyframes blinker {
-//   0% {
-//     transform: scale(0.9);
+// @keyframes pulse {
+//   from {
+//     transform: scale(1);
+//   }
+
+//   to {
+//     transform: scale(1.2);
 //   }
 // }
