@@ -151,6 +151,7 @@ export async function createCars(count: number): Promise<void> {
   try {
     // test request to catch ERR_CONNECTION_REFUSED
     await getCarsTotalCount();
+
     const creationRequests = Array.from({ length: count }).map(() =>
       createCar({
         name: getRandomCarName(),
