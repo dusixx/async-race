@@ -1,5 +1,5 @@
 .header {
-  border-bottom: 1px solid rgb(221 221 221);
+  border-bottom: 1px solid rgb(230 230 230);
   background-color: #fff;
 }
 
@@ -17,7 +17,7 @@
 
 .logo {
   display: flex;
-  height: 20px;
+  height: 36px;
 }
 
 .nav-wrapper {
@@ -45,11 +45,9 @@
   display: flex;
   align-items: center;
 
-  height: 30px;
-  padding: 0 16px;
-  padding-bottom: 2px;
+  padding: 8px 18px;
 
-  font-size: 12px;
+  font-size: 11px;
   color: white;
   text-transform: capitalize;
 
@@ -57,11 +55,13 @@
 }
 
 .radio-label-left {
+  border-right: 1px solid white;
   border-top-left-radius: 40px;
   border-bottom-left-radius: 40px;
 }
 
 .radio-label-right {
+  border-left: 1px solid white;
   border-top-right-radius: 40px;
   border-bottom-right-radius: 40px;
 }
@@ -70,7 +70,7 @@
   color: rgb(143 143 149);
   background: none;
   background-color: rgb(240 240 240);
-  box-shadow: inset 0 1px 1px 1px rgb(0 0 0 / 25%);
+  box-shadow: inset 0 1px 1px 1px rgb(0 0 0 / 15%);
 
   @include non-interactive {
     cursor: default;

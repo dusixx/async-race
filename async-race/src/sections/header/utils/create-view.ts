@@ -9,6 +9,8 @@ const GARAGE_RADIO_ID = 'garage-nav';
 const WINNERS_RADIO_ID = 'winners-nav';
 const GARAGE_LABEL_TEXT = `${Icon.Car} garage`;
 const WINNERS_LABEL_TEXT = `${Icon.Reward} winners`;
+const LOGO_IMG_SRC = './logo.png';
+const LOGO_IMG_ALT = 'logo';
 
 export const createView = (): {
   wrapper: ReturnType<typeof div>;
@@ -16,7 +18,7 @@ export const createView = (): {
   winnersRadio: ReturnType<typeof input>;
 } => {
   const wrapper = div({ className: styles.wrapper });
-  const logo = img({ className: styles.logo, src: './logo.png', alt: 'logo' });
+  const logo = img({ className: styles.logo, src: LOGO_IMG_SRC, alt: LOGO_IMG_ALT });
 
   const garageRadio = input({
     type: 'radio',
@@ -26,6 +28,7 @@ export const createView = (): {
     value: GARAGE_RADIO_ID,
     id: GARAGE_RADIO_ID,
   });
+
   const winnersRadio = input({
     type: 'radio',
     className: styles.input,
@@ -33,11 +36,13 @@ export const createView = (): {
     value: WINNERS_RADIO_ID,
     id: WINNERS_RADIO_ID,
   });
+
   const garageLabel = label({
     className: styles.radioLabelLeft,
     htmlFor: GARAGE_RADIO_ID,
     text: GARAGE_LABEL_TEXT,
   });
+
   const winnersLabel = label({
     className: styles.radioLabelRight,
     htmlFor: WINNERS_RADIO_ID,

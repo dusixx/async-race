@@ -7,8 +7,9 @@ import { Icon } from '../../../constants/index.ts';
 import styles from '../garage.module.scss';
 import { getFinishingTimeSecs } from './misc.ts';
 
-const WINNER_IMAGE_SRC = './reward.png';
+const REWARD_IMG_SRC = './reward.png';
 const TOTAL_CARS_TEXT = 'cars total:';
+const REWARD_IMG_ALT = 'reward picture';
 
 const buttonsData = {
   race: `${Icon.Rocket} race`,
@@ -21,7 +22,7 @@ export type ButtonsMap = Record<string, Button>;
 
 export const getWinnerInfoDetailsMarkup = (targetTrack: Track): string => {
   const { car } = targetTrack;
-  const time = getFinishingTimeSecs(car.stats).toString();
+  const time = getFinishingTimeSecs(car.stats).toFixed(3);
   return `
     <div class="${styles.winnerInfo}">
       <p class="${styles.winnerName}">${car.name}</p>
@@ -38,7 +39,11 @@ export const createWinnerModalView = (): {
   winnerInfo: ReturnType<typeof div>;
 } => {
   const winnerInfoWrapper = div({ className: styles.winnerInfoWrapper });
-  const image = img({ className: styles.winnerImage, src: WINNER_IMAGE_SRC, alt: 'reward' });
+  const image = img({
+    className: styles.winnerImage,
+    src: REWARD_IMG_SRC,
+    alt: REWARD_IMG_ALT,
+  });
   const winnerInfo = div({ className: styles.winnerInfo });
 
   winnerInfoWrapper.append(image, winnerInfo);
@@ -79,7 +84,7 @@ export const createView = (): {
   const leftControls = div({ className: styles.leftControls });
   const rightControls = div({ className: styles.rightControls });
 
-  const totalCarsCounter = span();
+  const totalCarsCounter = span({ className: styles.carsCounter });
   const totalCarsWrapper = div(
     { className: styles.totalCarsWrapper },
     span({ text: TOTAL_CARS_TEXT }),

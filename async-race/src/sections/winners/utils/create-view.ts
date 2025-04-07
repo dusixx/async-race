@@ -46,7 +46,7 @@ export const createWinnersTableContent = (data: WinnerTableRowData[]): ReturnTyp
     const nameColumn = li({ className: styles.tableColumn, text: name });
     nameColumn.toggleClass(styles.nameColumn);
 
-    const timeColumn = li({ className: styles.tableColumn, text: time.toString() });
+    const timeColumn = li({ className: styles.tableColumn, text: time.toFixed(3) });
 
     const winsColumn = li({ className: styles.tableColumn, text: wins.toString() });
 
@@ -75,17 +75,13 @@ const createWinnersTableView = (): TableViewReturnType => {
   nameColumn.toggleClass(styles.nameColumn);
 
   const winsColumn = new SortableColumn(
-    {
-      className: styles.sortableColumn,
-    },
+    { className: styles.sortableColumn },
     span({ text: HeaderColumnText.Wins })
   );
   winsColumn.toggleClass(styles.tableColumn);
 
   const timeColumn = new SortableColumn(
-    {
-      className: styles.sortableColumn,
-    },
+    { className: styles.sortableColumn },
     span({ text: HeaderColumnText.BestTime })
   );
   timeColumn.toggleClass(styles.tableColumn);
@@ -109,7 +105,7 @@ export const createView = (): CreateViewReturnType => {
   const wrapper = div({ className: styles.wrapper });
   const header = div({ className: styles.header });
 
-  const winnersCounter = span();
+  const winnersCounter = span({ className: styles.winnersCounter });
   const winnersCounterWrapper = div(
     { className: styles.winnersCounterWrapper },
     span({ text: TOTAL_WINNERS_TEXT }),
@@ -117,11 +113,9 @@ export const createView = (): CreateViewReturnType => {
   );
 
   const paginator = new Paginator();
-
   header.append(winnersCounterWrapper, paginator);
 
   const { winsColumn, timeColumn, tableContentWrapper, tableWrapper } = createWinnersTableView();
-
   wrapper.append(header, tableWrapper);
 
   return {

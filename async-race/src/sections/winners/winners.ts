@@ -68,12 +68,6 @@ export class Winners extends Element {
         rowsData.push({ ...winnerData, ...carData[index] });
       }
     });
-    // for (const winnerData of items) {
-    //   const carData = await api.getCar(winnerData.id);
-    //   if (carData) {
-    //     rowsData.push({ ...winnerData, ...carData });
-    //   }
-    // }
     const content = createWinnersTableContent(rowsData);
     this.tableContentWrapper.removeChildren();
     this.tableContentWrapper.append(content);
@@ -100,7 +94,7 @@ export class Winners extends Element {
     };
   }
 
-  private addOnBeforeContentChangeHandler(): void {
+  private addBeforeNavigateWinnersHandler(): void {
     document.addEventListener(EventType.BeforeNavigateWinners, () => {
       void this.fetchWinnersData(this.paginator.currentPage);
     });
@@ -118,7 +112,7 @@ export class Winners extends Element {
 
     this.addTimeColumnChangeHandler();
     this.addWinsColumnChangeHandler();
-    this.addOnBeforeContentChangeHandler();
+    this.addBeforeNavigateWinnersHandler();
     this.addPaginatorChangeHandler();
   }
 }

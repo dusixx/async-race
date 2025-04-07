@@ -47,7 +47,7 @@ export class Garage extends Element {
     const { winnerInfo, winnerInfoWrapper } = createWinnerModalView();
     this.modal = new Modal({
       showCancelButton: false,
-      // .node to prevent call removeChildByRef until the BaseElement is fixed
+      // using .node to prevent call removeChildByRef until the BaseElement is fixed
       parent: this.node,
       content: winnerInfoWrapper,
     });
