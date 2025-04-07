@@ -237,6 +237,14 @@ export class Garage extends Element {
     });
   }
 
+  private addBeforeNavigateGarageHandler(): void {
+    document.addEventListener(EventType.BeforeNavigateGarage, () => {
+      if (!this.tracksMap.size) {
+        void this.fetchCarsData(this.paginator.currentPage);
+      }
+    });
+  }
+
   private init(): void {
     // enable all but reset
     this.disableButtons(false, ['reset']);
@@ -249,5 +257,6 @@ export class Garage extends Element {
     this.addRaceClickHandler();
     this.addPaginatorChangeHandler();
     this.addAddClickHandler();
+    this.addBeforeNavigateGarageHandler();
   }
 }

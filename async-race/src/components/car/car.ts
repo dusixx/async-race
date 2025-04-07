@@ -102,7 +102,7 @@ export class Car {
 
   public async stop(): Promise<void> {
     // abort current request (started or drive)
-    this.abortController?.abort();
+    this.abortController?.abort(null);
     this.updateStatus('stopping');
 
     await this.updateCarDataIfNecessary();
@@ -207,7 +207,7 @@ export class Car {
 
       if (progress >= ANIMATION_PROGRESS_THRESHOLD) {
         // abort drive mode
-        this.abortController?.abort();
+        this.abortController?.abort(null);
         this.updateStatus('finished');
       }
       if (this.status !== 'started') {
