@@ -3,7 +3,7 @@ body {
 
   margin: 0;
 
-  font-family: Nunito, sans-serif;
+  font-family: Comfortaa, sans-serif;
   color: var(--color-text);
 
   background-color: var(--color-bg);
@@ -19,30 +19,47 @@ input[type='number'] {
   appearance: textfield;
 }
 
-p {
+p,
+ul {
   margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
 }
 
 :root {
   --color-text: rgb(53 53 53);
-  --color-bg: rgb(235 235 235 / 90%);
+  --color-bg: rgb(237 237 237);
   --color-bg-sec: rgb(232 233 238);
   --color-bg-sec-60: rgb(232 233 238 / 60%);
   --color-modal-bg: rgb(246 246 246);
-  --color-accent: rgb(206 20 104);
+  --color-accent: #e4106f;
   --color-accent-20: rgb(206 20 104 / 20%);
   --color-invalid-bg: rgb(255 243 248);
-  --color-backdrop-bg: rgb(89 89 89 / 50%);
+  --color-backdrop-bg: rgb(120 120 120 / 80%);
   --color-btn-bg: rgb(9 96 218);
+  --color-btn-bg-sec: rgb(30 164 0);
   --color-btn: white;
-  --color-border: rgb(219 219 219 / 60%);
+  --color-border: rgb(202 202 202);
   --color-border-active: rgb(78 169 255);
   --color-picked-option-bg: #e6f9d3;
-  --box-shaddow: 0 1px 1px 1px rgb(203 203 203/ 70%);
-  --border-radius: 20px;
-  --border-radius-sm: 6px;
+  --box-shadow: 0 1px 1px 1px rgb(203 203 203/ 70%);
+  --border-radius: 40px;
+  --border-radius-sm: 2px;
   --max-width: 1280px;
-  --wrapper-max-width: 750px;
-  --wrapper-min-width: 300px;
+  --wrapper-max-width: 1280px;
+  --wrapper-min-width: 450px;
   --backdrop-zindex: 1000;
+
+  // car and track
+  --car-width: 170px;
+  --car-bottom: 6px;
+  --track-height: 170px;
+  --track-header-padding: 4px;
+  --track-header-padding-left: 5px;
+  --track-button-width: 27px;
+  --track-buttons-gap: 8px;
+  --tracks-gap: 25px;
 }
