@@ -6,7 +6,7 @@ import { SortableColumn } from '../../../components/sortable-column/sortable-col
 import type { CarData, WinnerData } from '../../../services/api/types.ts';
 import styles from '../winners.module.scss';
 
-const TOTAL_WINNERS_TEXT = 'winners total:';
+const TOTAL_WINNERS_TEXT = 'Winners:';
 
 enum HeaderColumnText {
   Index = '#',

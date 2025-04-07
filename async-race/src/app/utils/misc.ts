@@ -9,7 +9,7 @@ const SHOWN_ONCE_VALUE = '1';
 
 const START_MESSAGE = `
   <p class="${styles.message}">
-    <span>${Icon.PointingUp}</span> <b>PLEASE NOTE:</b> This app additionally saves the <b>type</b> property.
+    <span>${Icon.PointingUp}</span> <b>PLEASE NOTE:</b> This app additionally saves the <b>type</b> of car view.
     For cars created by another app the appearance (except <b>color</b> and <b>name</b>) 
     will be <b>random</b> each time the data is fetched from the server.
     <p class="${styles.message}">For the best cross-check experience, please <b>restart the server</b></p>

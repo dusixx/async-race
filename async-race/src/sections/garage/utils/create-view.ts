@@ -8,7 +8,7 @@ import styles from '../garage.module.scss';
 import { getFinishingTimeSecs } from './misc.ts';
 
 const REWARD_IMG_SRC = './reward.png';
-const TOTAL_CARS_TEXT = 'cars total:';
+const TOTAL_CARS_TEXT = 'Garage:';
 const REWARD_IMG_ALT = 'reward picture';
 
 const buttonsData = {
