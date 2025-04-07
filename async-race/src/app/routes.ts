@@ -1,10 +1,13 @@
 import type { Element } from '../components/base/element.ts';
 import type { Router } from '../router/router.ts';
+import { Garage } from '../sections/garage/garage.ts';
 import { NotFoundSection } from '../sections/index.ts';
+import { Winners } from '../sections/winners/winners.ts';
 
 export enum Pathname {
-  OptionList = '/',
-  DecisionPicker = '/decision-picker',
+  Root = '/',
+  Garage = '/garage',
+  Winners = '/winners',
   Index = '/index',
   NotFound = '/{404}',
 }
@@ -16,12 +19,16 @@ export type Route = {
 
 export const routes: Route[] = [
   {
-    pathname: Pathname.DecisionPicker,
-    component: (router: Router) => new NotFoundSection(router),
+    pathname: Pathname.Garage,
+    component: () => new Garage(),
   },
   {
-    pathname: Pathname.OptionList,
-    component: (router: Router) => new NotFoundSection(router),
+    pathname: Pathname.Root,
+    component: () => new Garage(),
+  },
+  {
+    pathname: Pathname.Winners,
+    component: () => new Winners(),
   },
   {
     pathname: Pathname.Index,
