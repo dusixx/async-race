@@ -200,7 +200,11 @@ export class Garage extends Element {
     this.buttons.generate.onClick = (): void => {
       this.disableButtons(true);
       this.generateCarsAndRefetch()
-        .catch(console.debug)
+        .catch((error: unknown) => {
+          if (error instanceof Error) {
+            console.debug(error.message);
+          }
+        })
         .finally(() => {
           this.disableButtons(false, ['reset']);
         });
