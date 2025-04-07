@@ -1,8 +1,10 @@
 export enum EventType {
   BeforeContentChange = 'beforecontentchange',
+  BeforeNavigateWinners = 'beforenavigatewinners',
   TrackReady = 'trackready',
-  TrackRaceStarting = 'trackracestarting',
   TrackRemove = 'trackremove',
+  TrackRaceStarting = 'trackracestarting',
+  TrackRaceStarted = 'trackracestarted',
   TrackRaceFinished = 'trackracefinished',
 }
 
@@ -29,6 +31,13 @@ export enum Icon {
   GameDie = '🎲',
   CrossMark = '❌',
   CheckMark = '✔️',
+  CheckMark2 = '✔',
+  CrossMark2 = '✖',
+  First = '➊',
+  Star = '✪',
+  Smile = '☻',
+  ArrowUp = '↑',
+  ArrowDown = '↓',
 }
 
 export enum Visibility {
