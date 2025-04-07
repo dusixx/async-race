@@ -13,10 +13,10 @@ type OnChangeHandler = ((newPage: number) => void) | null;
 
 export class Paginator extends Element<HTMLDivElement> {
   public onChange: OnChangeHandler = null;
-  private totalPagesRef: Element<HTMLSpanElement>;
-  private currentPageRef: Element<HTMLSpanElement>;
   private next: Button;
   private previous: Button;
+  private totalPagesRef: Element<HTMLSpanElement>;
+  private currentPageRef: Element<HTMLSpanElement>;
   private _currentPage: number = START_PAGE_NUMBER;
   private _totalItems: number = MIN_TOTAL_ITEMS;
   private _itemsPerPage: number = MIN_ITEMS_PER_PAGE;
@@ -110,6 +110,8 @@ export class Paginator extends Element<HTMLDivElement> {
   }
 
   private init(): void {
+    this.previous.disabled = true;
+    this.next.disabled = true;
     this.addNextClickHandler();
     this.addPrevClickHandler();
   }
