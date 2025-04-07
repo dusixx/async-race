@@ -1,6 +1,6 @@
 .header {
-  margin-bottom: 25px;
-  border-bottom: 1px solid rgb(237 237 237);
+  border-bottom: 1px solid rgb(221 221 221);
+  background-color: #fff;
 }
 
 .wrapper {
@@ -12,12 +12,12 @@
   align-items: center;
   justify-content: space-between;
 
-  padding: 30px 0;
+  padding: 20px 0;
 }
 
 .logo {
   display: flex;
-  height: 24px;
+  height: 20px;
 }
 
 .nav-wrapper {
@@ -46,10 +46,10 @@
   align-items: center;
 
   height: 30px;
-  padding: 0 20px;
+  padding: 0 16px;
   padding-bottom: 2px;
 
-  font-size: 14px;
+  font-size: 12px;
   color: white;
   text-transform: capitalize;
 
@@ -69,7 +69,7 @@
 .input:checked ~ label {
   color: rgb(143 143 149);
   background: none;
-  background-color: rgb(245 243 255);
+  background-color: rgb(240 240 240);
   box-shadow: inset 0 1px 1px 1px rgb(0 0 0 / 25%);
 
   @include non-interactive {

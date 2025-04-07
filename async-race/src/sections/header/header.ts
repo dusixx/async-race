@@ -1,5 +1,4 @@
 import { Element } from '../../components/base/element.ts';
-
 import { createView } from './utils/create-view.ts';
 
 import styles from './header.module.scss';

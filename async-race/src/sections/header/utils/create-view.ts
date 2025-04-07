@@ -6,8 +6,8 @@ import styles from '../header.module.scss';
 
 const RADIO_GROUP_NAME = 'nav-buttons';
 const GARAGE_RADIO_ID = 'garage-nav';
-const GARAGE_LABEL_TEXT = `${Icon.Car} garage`;
 const WINNERS_RADIO_ID = 'winners-nav';
+const GARAGE_LABEL_TEXT = `${Icon.Car} garage`;
 const WINNERS_LABEL_TEXT = `${Icon.Reward} winners`;
 
 export const createView = (): {
