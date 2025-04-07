@@ -65,6 +65,8 @@ export class Modal extends Element<HTMLDivElement> {
     this.contentRoot.removeChildren();
     if (typeof content === 'string') {
       this.contentRoot.node.insertAdjacentHTML('beforeend', content);
+    } else if (content instanceof HTMLElement) {
+      this.contentRoot.node.append(content);
     } else {
       this.contentRoot.append(content);
     }
@@ -115,18 +117,14 @@ export class Modal extends Element<HTMLDivElement> {
   private render(flag: boolean): void {
     const { parent } = this;
     if (parent instanceof HTMLElement) {
-      if (flag) {
-        parent.append(this.node);
-      } else {
-        parent.removeChild(this.node);
-      }
-    } else {
-      if (flag) {
-        parent.append(this);
-      } else {
-        parent.removeChildByRef(this);
-      }
+      const action = flag ? 'append' : 'removeChild';
+      parent[action](this.node);
+
+      return;
     }
+    // TODO: fix removeChildByRef in BaseElement
+    const action = flag ? 'append' : 'removeChildByRef';
+    parent[action](this);
   }
 
   private toggle(flag: boolean): void {
