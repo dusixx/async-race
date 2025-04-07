@@ -1,6 +1,6 @@
 import { EventType, Icon } from '../../constants/index.ts';
 import { getFinishingTimeSecs } from '../../sections/garage/utils/misc.ts';
-import * as api from '../../services/api/garage-api.ts';
+import * as api from '../../services/api/index.ts';
 import type { CarData } from '../../services/api/types.ts';
 import { Element } from '../base/element.ts';
 import { CarEditor } from '../car-editor/car-editor.ts';
@@ -10,22 +10,26 @@ import styles from './track.module.scss';
 import type { ButtonsMap } from './utils/create-view.ts';
 import { createView } from './utils/create-view.ts';
 
+const CAR_LEFT_PX = 35;
 const CAR_LEFT_CSSVAR = '--car-left';
-const CAR_LEFT_PX = 20;
-const STATUS_SUCCESS_COLOR = 'var(--color-btn-bg-sec)';
-const STATUS_ERROR_COLOR = 'var(--color-accent)';
 const BROKEN_STATUS_TEXT = 'connection lost';
+
+export enum StatusColor {
+  SuccessBg = 'var(--color-btn-bg-sec)',
+  ErrorBg = 'var(--color-accent)',
+}
 
 type ShowStatusProps = {
   message: string;
   success?: boolean;
   icon?: string;
-  fontSize?: string;
+  color?: string;
 };
 
 export class Track extends Element<HTMLDivElement> {
   public car: Car;
   public onStarted: (() => void) | null = null;
+  public onStopped: (() => void) | null = null;
   private carName: Element<HTMLSpanElement>;
   private buttons: ButtonsMap;
   private carEditor: CarEditor = new CarEditor();
@@ -69,14 +73,16 @@ export class Track extends Element<HTMLDivElement> {
     }
   }
 
-  public showStatus({ message, success, icon, fontSize }: ShowStatusProps): void {
-    const { style } = this.statusInfo.node;
-    icon = icon || (success ? Icon.CheckMark : Icon.CrossMark);
-    const color = success ? STATUS_SUCCESS_COLOR : STATUS_ERROR_COLOR;
+  public showStatus({ message, success, icon, color }: ShowStatusProps): void {
+    const [statusIcon, statusText] = this.statusInfo.children;
 
-    this.statusInfo.text = `${icon} ${message}`;
-    this.statusInfo.node.style.fontSize = fontSize ?? '';
-    style.borderColor = color;
+    icon = icon || (success ? Icon.CheckMark2 : Icon.CrossMark2);
+    const bgColor = color || (success ? StatusColor.SuccessBg : StatusColor.ErrorBg);
+
+    statusText.text = message;
+    statusIcon.text = icon;
+    statusIcon.node.style.backgroundColor = bgColor;
+
     this.overlay.toggleClass(styles.active, true);
   }
 
@@ -103,7 +109,12 @@ export class Track extends Element<HTMLDivElement> {
       api
         .deleteCar(this.car.id)
         .then(() => {
-          this.dispatch(EventType.TrackRemove);
+          api
+            .deleteWinner(this.car.id)
+            .then(() => {
+              this.dispatch(EventType.TrackRemove);
+            })
+            .catch(console.debug);
         })
         .catch(console.debug);
     };
@@ -150,6 +161,7 @@ export class Track extends Element<HTMLDivElement> {
           this.delayBeforeStart = undefined;
           this.disableButtons(false, ['stop']);
           this.dispatch(EventType.TrackReady);
+          this.onStopped?.();
           break;
         }
         case 'finished': {

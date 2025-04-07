@@ -6,12 +6,15 @@ import styles from '../track.module.scss';
 
 const ICONS_FILE_PATH = './icons-2.svg';
 
+// TODO: refactor
 const buttonsData = {
   start: 'start',
   stop: 'stop',
   update: 'edit-3',
   remove: 'remove',
 };
+
+// type
 
 export type ButtonsMap = Record<string, Button>;
 
@@ -52,7 +55,9 @@ export const createView = (): {
   const { buttonsWrapper, buttonsMap } = createButtonsWrapper();
   const carName = span({ className: styles.carName });
   const headerWrapper = div({ className: styles.header }, buttonsWrapper, carName);
-  const statusInfo = span({ className: styles.statusInfo });
+  const statusIcon = span({ className: styles.statusIcon });
+  const statusText = span({ className: styles.statusText });
+  const statusInfo = div({ className: styles.statusInfo }, statusIcon, statusText);
   const overlay = div({ className: styles.overlay }, statusInfo);
 
   return { overlay, buttonsMap, carName, headerWrapper, statusInfo };
