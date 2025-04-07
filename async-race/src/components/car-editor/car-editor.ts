@@ -10,11 +10,6 @@ import { createView } from './utils/create-view.ts';
 const UPDATE_HEADING = 'Update car';
 const CREATE_HEADING = 'Add new car';
 
-// const NOTE_TEXT = `${Icon.PointingUp} NOTE: we can only store the color and name on the server.
-//   So the car type and driver will be different after adding.
-//   Only the color and name will be the same.
-// `;
-
 type OnCreateHnadler = (() => void) | null;
 
 type OnUpdateHandler = ((updatedCar: Car) => void) | null;
