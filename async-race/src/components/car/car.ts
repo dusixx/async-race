@@ -145,7 +145,7 @@ export class Car {
     this.abortController = new AbortController();
     void api.switchCarEngineToDriveMode(this.id, this.abortController.signal).then((result) => {
       if (result === null || this.status === 'stopped') {
-        console.debug(this.id, 'drive mode aborted');
+        // console.debug(this.id, 'drive mode aborted');
         return;
       }
       this.status = result;
@@ -166,7 +166,7 @@ export class Car {
     const result = await api.updateCarEngineStatus(this.id, 'started', this.abortController.signal);
 
     if (result == null) {
-      console.debug(this.id, 'starting aborted');
+      // console.debug(this.id, 'starting aborted');
       return null;
     }
     const durationMs = result.distance / result.velocity;
@@ -211,7 +211,7 @@ export class Car {
         this.updateStatus('finished');
       }
       if (this.status !== 'started') {
-        console.debug(this.id, this.name, this.stats);
+        // console.debug(this.id, this.name, this.stats);
         return;
       }
       this.wrapper.node.style.transform = `translate(${step.toString()}px)`;

@@ -1,5 +1,4 @@
 import type { QueryParameters } from '../types.ts';
-// import { HttpError, HttpStatus } from './http-error.ts';
 
 const BASE_PORT = '3000';
 const BASE_URL = `http://127.0.0.1:${BASE_PORT}`;
@@ -41,15 +40,7 @@ export async function fetchData(
   if (queryParameters) {
     url += `?${createQueryString(queryParameters)}`;
   }
-  console.debug(init?.method ?? 'GET', url.replace(BASE_URL, ''));
+  // console.debug(init?.method ?? 'GET', url.replace(BASE_URL, ''));
 
   return await fetch(url, init);
-  // if (!response.ok) {
-  //   const httpError = new HttpError(response.status, response.statusText);
-  //   if (response.status === HttpStatus.InternalServerError.valueOf()) {
-  //     throw httpError;
-  //   }
-  //   console.debug(httpError);
-  // }
-  // return response;
 }
