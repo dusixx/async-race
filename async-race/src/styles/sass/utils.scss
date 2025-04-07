@@ -77,9 +77,8 @@
 
   &:disabled {
     @include non-interactive {
-      opacity: 0.3;
-
-      // filter: grayscale(0.5);
+      opacity: 0.2;
+      filter: grayscale(1);
     }
   }
 }
@@ -125,7 +124,5 @@
 
   padding: 40px 0;
   padding-bottom: 30px;
-
-  // margin-bottom: 25px;
   border-radius: 40px;
 }
