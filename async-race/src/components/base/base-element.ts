@@ -2,41 +2,33 @@ import type { BaseElementProps } from './create-element.ts';
 import { createElement } from './create-element.ts';
 
 export class BaseElement<T extends HTMLElement = HTMLElement> {
-  protected _children: BaseElement[] = [];
-  private _node: T;
+  public children: BaseElement[] = [];
+  public node: T;
 
   constructor(props?: BaseElementProps<T>, ...children: (BaseElement | null)[]) {
     const { tag = 'div', text = '', ...rest } = props ?? {};
 
-    this._node = createElement<T>(tag, rest);
-    this._node.textContent = text;
+    this.node = createElement<T>(tag, rest);
+    this.node.textContent = text;
 
     this.append(...children);
   }
 
-  public get children(): BaseElement[] {
-    return this._children;
-  }
-
   public get text(): string {
-    return this._node.textContent ?? '';
-  }
-
-  public get node(): T {
-    return this._node;
+    return this.node.textContent ?? '';
   }
 
   public set text(value: string) {
-    this._node.textContent = value;
+    this.node.textContent = value;
   }
 
-  public append(...children: (BaseElement | null)[]): void {
+  public append(...children: (BaseElement | null | undefined)[]): void {
     children.forEach((child) => {
       if (child) {
-        this._children.push(child);
+        this.children.push(child);
       }
     });
-    this._node.append(...children.map((child) => child?.node ?? ''));
+    this.node.append(...children.map((child) => child?.node ?? ''));
   }
 
   public setAttribute(attributes: Record<string, string>): void {
@@ -49,15 +41,15 @@ export class BaseElement<T extends HTMLElement = HTMLElement> {
     const names = Array.isArray(attributes) ? attributes : [attributes];
 
     names.forEach((name) => {
-      this._node.removeAttribute(name);
+      this.node.removeAttribute(name);
     });
   }
 
-  public addListener(...rest: Parameters<typeof this._node.addEventListener>): void {
+  public addListener(...rest: Parameters<typeof this.node.addEventListener>): void {
     this.node.addEventListener(...rest);
   }
 
-  public removeListener(...rest: Parameters<typeof this._node.removeEventListener>): void {
+  public removeListener(...rest: Parameters<typeof this.node.removeEventListener>): void {
     this.node.removeEventListener(...rest);
   }
 
@@ -66,19 +58,20 @@ export class BaseElement<T extends HTMLElement = HTMLElement> {
   }
 
   public removeChildByRef(reference: BaseElement): void {
-    this._children = this._children.filter((item) => item !== reference);
+    this.children = this.children.filter((item) => item !== reference);
     reference.remove();
   }
 
   public remove(): void {
     this.removeChildren();
-    this._node.remove();
+    this.node.remove();
   }
 
+  // TODO: removeChildren should remove only children without touching their descendants
   public removeChildren(): void {
-    this._children.forEach((child) => {
+    this.children.forEach((child) => {
       child.remove();
     });
-    this._children.length = 0;
+    this.children.length = 0;
   }
 }

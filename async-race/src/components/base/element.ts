@@ -3,7 +3,7 @@ import { BaseElement } from './base-element';
 import type { BaseElementProps } from './create-element.ts';
 
 export class Element<T extends HTMLElement = HTMLElement> extends BaseElement<T> {
-  protected override _children: Element[] = [];
+  public override children: Element[] = [];
 
   constructor(props?: BaseElementProps<T>, ...children: (Element | null)[]) {
     super(props);
@@ -15,20 +15,16 @@ export class Element<T extends HTMLElement = HTMLElement> extends BaseElement<T>
     return style.visibility === Visibility.Visible.toString();
   }
 
-  public override get children(): Element[] {
-    return this._children;
-  }
-
   public set visible(flag: boolean) {
     const { style } = this.node;
     style.visibility = flag ? Visibility.Visible : Visibility.Hidden;
     style.pointerEvents = flag ? '' : Visibility.None;
   }
 
-  public override append(...children: (Element | null)[]): void {
+  public override append(...children: (Element | null | undefined)[]): void {
     children.forEach((child) => {
       if (child) {
-        this._children.push(child);
+        this.children.push(child);
       }
     });
     this.node.append(...children.map((child) => child?.node ?? ''));

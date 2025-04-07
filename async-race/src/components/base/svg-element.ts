@@ -1,15 +1,20 @@
 const NAMESPACE_URI = 'http://www.w3.org/2000/svg';
 const LINK_NAMESPACE = 'http://www.w3.org/1999/xlink';
 
-type Props = Partial<Omit<HTMLElement, 'tagName' | 'classList'>>;
+type Props = Partial<Omit<HTMLElement, 'tagName' | 'classList'>> | null;
 
-type UseAttributtes = Props & { href: string };
+export type UseAttributtes = Props & { href: string };
+
+export const svg = (props?: Props, ...useAttributes: UseAttributtes[]): SVGElement => {
+  return new SVGElement(props, ...useAttributes);
+};
 
 export class SVGElement {
   public node: SVGSVGElement;
   public children: SVGUseElement[] = [];
 
-  constructor({ className, ...rest }: Props, ...useAttributes: UseAttributtes[]) {
+  constructor(props?: Props, ...useAttributes: UseAttributtes[]) {
+    const { className, ...rest } = props ?? {};
     const node = document.createElementNS(NAMESPACE_URI, 'svg');
 
     if (className) {
@@ -32,7 +37,7 @@ export class SVGElement {
       }
       Object.assign(useNode, rest);
       this.children.push(useNode);
-      this.node.appendChild<SVGUseElement>(useNode);
+      this.node.appendChild(useNode);
     });
   }
 
