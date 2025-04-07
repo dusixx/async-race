@@ -1,11 +1,12 @@
 export enum EventType {
   BeforeContentChange = 'beforecontentchange',
   BeforeNavigateWinners = 'beforenavigatewinners',
-  TrackReady = 'trackready',
-  TrackRemove = 'trackremove',
+  BeforeNavigateGarage = 'beforenavigategarage',
   TrackRaceStarting = 'trackracestarting',
   TrackRaceStarted = 'trackracestarted',
   TrackRaceFinished = 'trackracefinished',
+  TrackReady = 'trackready',
+  TrackRemove = 'trackremove',
 }
 
 export enum Icon {
@@ -38,6 +39,7 @@ export enum Icon {
   Smile = '☻',
   ArrowUp = '↑',
   ArrowDown = '↓',
+  ExclamationMark = '❗',
 }
 
 export enum Visibility {
