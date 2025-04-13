@@ -12,12 +12,12 @@
   align-items: center;
   justify-content: space-between;
 
-  padding: 20px 0;
+  padding: 18px 0;
 }
 
 .logo {
   display: flex;
-  height: 36px;
+  height: 34px;
 }
 
 .nav-wrapper {
@@ -55,13 +55,11 @@
 }
 
 .radio-label-left {
-  border-right: 1px solid white;
   border-top-left-radius: 40px;
   border-bottom-left-radius: 40px;
 }
 
 .radio-label-right {
-  border-left: 1px solid white;
   border-top-right-radius: 40px;
   border-bottom-right-radius: 40px;
 }

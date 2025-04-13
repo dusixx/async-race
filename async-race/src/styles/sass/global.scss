@@ -31,16 +31,16 @@ ul {
 
 :root {
   --color-text: rgb(53 53 53);
-  --color-bg: rgb(240 240 240);
+  --color-bg: rgb(245 245 245);
   --color-bg-sec: rgb(232 233 238);
   --color-bg-sec-60: rgb(232 233 238 / 60%);
   --color-modal-bg: rgb(246 246 246);
-  --color-accent: #f40051;
+  --color-accent: #eb004a;
   --color-accent-20: rgb(206 20 104 / 20%);
   --color-invalid-bg: rgb(255 243 248);
   --color-backdrop-bg: rgb(120 120 120 / 80%);
-  --color-btn-bg: #005eea;
-  --color-btn-bg-sec: #34ac00;
+  --color-btn-bg: #005aea;
+  --color-btn-bg-sec: #59ac00;
   --color-btn: white;
   --color-border: rgb(202 202 202);
   --color-border-active: rgb(78 158 255);
@@ -54,12 +54,12 @@ ul {
   --backdrop-zindex: 1000;
 
   // car and track
-  --car-width: 160px;
-  --car-bottom: 6px;
+  --car-width: 150px;
+  --car-bottom: 7px;
   --track-height: 170px;
   --track-header-padding: 4px;
   --track-header-padding-left: 5px;
   --track-button-width: 27px;
   --track-buttons-gap: 8px;
-  --tracks-gap: 25px;
+  --tracks-gap: 22px;
 }
