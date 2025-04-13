@@ -1,26 +1,16 @@
 import * as api from '../../services/api/garage-api.ts';
-import type { CarData, CarDriveStatusType } from '../../services/api/types.ts';
-import { ColorCSSVariableName, createView } from './utils/create-view.ts';
-
+import type { CarData } from '../../services/api/types.ts';
 import { getRandomHexColor, isValidHexColor } from '../../utils/color.ts';
 import { getRandomCarName } from '../../utils/misc.ts';
 import { timingFunction } from '../../utils/timing-funcs.ts';
 import type { div } from '../base/index.ts';
+import type { CarStats, CarStatus, OnStatusChangeHandler, UpdateStatus } from './types.ts';
+import { ColorCSSVariableName, createView } from './utils/create-view.ts';
 import type { CarViewType } from './utils/misc.ts';
 
 const FULL_ANGLE = 360;
 const ANIMATION_PROGRESS_THRESHOLD = 0.98;
 const WHEEL_MAX_TURNS_COUNT = 10;
-
-export type UpdateCarData = Partial<Omit<CarData, 'id'>>;
-
-export type CarStats = Partial<Record<CarStatus, number>>;
-
-type OnStatusChangeHandler = ((status: CarStatus, stats?: CarStats) => void) | null;
-
-type CarStatus = 'starting' | 'started' | 'stopping' | 'stopped' | CarDriveStatusType;
-
-type UpdateStatus = 'created' | 'updated';
 
 export class Car {
   public readonly wrapper: ReturnType<typeof div>;
@@ -113,11 +103,9 @@ export class Car {
   }
 
   public async updateCarData(): Promise<UpdateStatus | null> {
-    const carData = {
-      name: this.name,
-      color: this.color,
-      type: this.type,
-    };
+    const { name, color, type } = this;
+    const carData = { name, color, type };
+
     if (!this.isExists) {
       const data = await api.createCar(carData);
       if (!data) {
@@ -148,7 +136,6 @@ export class Car {
     this.abortController = new AbortController();
     void api.switchCarEngineToDriveMode(this.id, this.abortController.signal).then((result) => {
       if (result === null || this.status === 'stopped') {
-        // console.debug(this.id, 'drive mode aborted');
         return;
       }
       this.status = result;
@@ -169,7 +156,6 @@ export class Car {
     const result = await api.updateCarEngineStatus(this.id, 'started', this.abortController.signal);
 
     if (result == null) {
-      // console.debug(this.id, 'starting aborted');
       return null;
     }
     const durationMs = result.distance / result.velocity;
@@ -196,6 +182,14 @@ export class Car {
     return parseFloat(getComputedStyle(this.wrapper.node).width);
   }
 
+  private updateStyle(step: number, angle: number): void {
+    const { wrapper, leftWheel, rightWheel } = this;
+
+    wrapper.node.style.transform = `translate(${step.toString()}px)`;
+    leftWheel.style.transform = `rotate(${angle.toString()}deg)`;
+    rightWheel.style.transform = `rotate(${angle.toString()}deg)`;
+  }
+
   private startAnimation(durationMs: number, distancePx: number): void {
     const startTime = performance.now();
     const effectiveDistancePx = distancePx - this.getCarWidthPx();
@@ -204,7 +198,6 @@ export class Car {
     const move = (): void => {
       const elapsed = performance.now() - startTime;
       const progress = timingFunction.easeOutQuint(elapsed / durationMs);
-
       const step = effectiveDistancePx * progress;
       const angle = wheelSpinTotalAngle * progress;
 
@@ -214,12 +207,9 @@ export class Car {
         this.updateStatus('finished');
       }
       if (this.status !== 'started') {
-        // console.debug(this.id, this.name, this.stats);
         return;
       }
-      this.wrapper.node.style.transform = `translate(${step.toString()}px)`;
-      this.leftWheel.style.transform = `rotate(${angle.toString()}deg)`;
-      this.rightWheel.style.transform = `rotate(${angle.toString()}deg)`;
+      this.updateStyle(step, angle);
 
       requestAnimationFrame(move);
     };

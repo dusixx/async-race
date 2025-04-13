@@ -1,4 +1,4 @@
-import type { CarStats } from '../../../components/car/car.ts';
+import type { CarStats } from '../../../components/car/types.ts';
 import type { Track } from '../../../components/track/track.ts';
 import { Icon } from '../../../constants/index.ts';
 import * as api from '../../../services/api/index.ts';
