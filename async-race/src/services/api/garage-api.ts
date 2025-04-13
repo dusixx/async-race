@@ -9,7 +9,14 @@ import {
   type CarVelocityAndDistance,
   type QueryParameters,
 } from './types.ts';
-import { CONTENT_TYPE, Endpoint, fetchData, HttpMethod } from './utils/fetch-data.ts';
+import {
+  CONTENT_TYPE,
+  Endpoint,
+  ERR_ALL_REQUIRED,
+  ERR_AT_LEAST_ONE_REQUIRED,
+  fetchData,
+  HttpMethod,
+} from './utils/fetch-data.ts';
 import { HttpStatus } from './utils/http-error.ts';
 import {
   isAbortError,
@@ -18,8 +25,13 @@ import {
   isCarVelocityAndDistance,
 } from './utils/index.ts';
 
-const ERR_ALL_REQUIRED = `all fields except 'id' are required`;
-const ERR_ONE_REQUIRED = `at least one field is required`;
+const stringifyCarData = (data: Partial<CarData>): string => {
+  return JSON.stringify({
+    name: data.name,
+    color: data.color,
+    type: data.type,
+  });
+};
 
 export async function getCarsTotalCount(): Promise<number> {
   const response = await fetchData(Endpoint.Cars, { _limit: 0 });
@@ -48,12 +60,13 @@ export async function createCar(carData: Omit<CarData, 'id'>): Promise<CarData |
   if (!carData.color || !carData.name) {
     throw Error(ERR_ALL_REQUIRED);
   }
+  const body = stringifyCarData(carData);
   const response = await fetchData(Endpoint.Cars, null, {
     method: HttpMethod.Post,
     headers: {
       'Content-Type': CONTENT_TYPE,
     },
-    body: JSON.stringify(carData),
+    body,
   });
   const data: unknown = await response?.json();
   if (!isCarData(data)) {
@@ -75,16 +88,17 @@ export async function updateCar(
   id: number,
   carData: Partial<Omit<CarData, 'id'>>
 ): Promise<CarData | null> {
-  if (!carData.color || !carData.name || !carData.type) {
-    throw Error(ERR_ONE_REQUIRED);
+  if (!carData.color && !carData.name && !carData.type) {
+    throw Error(ERR_AT_LEAST_ONE_REQUIRED);
   }
+  const body = stringifyCarData(carData);
   const path = `${Endpoint.Cars.toString()}/${id.toString()}`;
   const response = await fetchData(path, null, {
     method: HttpMethod.Patch,
     headers: {
       'Content-Type': CONTENT_TYPE,
     },
-    body: JSON.stringify(carData),
+    body,
   });
   const data: unknown = await response?.json();
   if (!isCarData(data)) {

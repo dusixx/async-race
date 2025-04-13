@@ -18,6 +18,9 @@ export enum HttpMethod {
   Delete = 'DELETE',
 }
 
+export const ERR_ALL_REQUIRED = `all fields except 'id' are required`;
+export const ERR_AT_LEAST_ONE_REQUIRED = `at least one field is required`;
+
 const createQueryString = (parameters: QueryParameters | null): string => {
   if (!parameters) {
     return '';

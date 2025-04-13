@@ -1,10 +1,14 @@
 import type { AllWinnersData, QueryParameters, WinnerData } from './types';
-import { CONTENT_TYPE, Endpoint, fetchData, HttpMethod } from './utils/fetch-data.ts';
+import {
+  CONTENT_TYPE,
+  Endpoint,
+  ERR_ALL_REQUIRED,
+  ERR_AT_LEAST_ONE_REQUIRED,
+  fetchData,
+  HttpMethod,
+} from './utils/fetch-data.ts';
 import { HttpStatus } from './utils/http-error.ts';
 import { isWinnerData, isWinnerDataArray } from './utils/index.ts';
-
-const ERR_CREATE_DATA_REQUIRED = `all properties are required`;
-const ERR_UPDATE_DATA_REQUIRED = `'wins' and 'time' are required`;
 
 export async function getWinnersTotalCount(): Promise<number> {
   const response = await fetchData(Endpoint.Winners, { _limit: 0 });
@@ -31,7 +35,7 @@ export async function getWinner(id: number): Promise<WinnerData | null> {
 
 export async function createWinner(winnerData: WinnerData): Promise<boolean> {
   if (!winnerData.id || !winnerData.wins || !winnerData.time) {
-    throw Error(ERR_CREATE_DATA_REQUIRED);
+    throw Error(ERR_ALL_REQUIRED);
   }
   const response = await fetchData(Endpoint.Winners, null, {
     method: HttpMethod.Post,
@@ -62,8 +66,8 @@ export async function updateWinner(
   id: number,
   winnerData: Omit<WinnerData, 'id'>
 ): Promise<WinnerData | null> {
-  if (!winnerData.time || !winnerData.wins) {
-    throw Error(ERR_UPDATE_DATA_REQUIRED);
+  if (!winnerData.time && !winnerData.wins) {
+    throw Error(ERR_AT_LEAST_ONE_REQUIRED);
   }
   const path = `${Endpoint.Winners.toString()}/${id.toString()}`;
   const response = await fetchData(path, null, {
