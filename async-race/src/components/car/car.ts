@@ -134,7 +134,9 @@ export class Car {
 
   private _drive(): void {
     this.abortController = new AbortController();
-    void api.switchCarEngineToDriveMode(this.id, this.abortController.signal).then((result) => {
+    const { signal } = this.abortController;
+
+    void api.switchCarEngineToDriveMode(this.id, signal).then((result) => {
       if (result === null || this.status === 'stopped') {
         return;
       }
@@ -152,9 +154,11 @@ export class Car {
 
   private async start(): Promise<number | null> {
     this.updateStatus('starting');
-    this.abortController = new AbortController();
-    const result = await api.updateCarEngineStatus(this.id, 'started', this.abortController.signal);
 
+    this.abortController = new AbortController();
+    const { signal } = this.abortController;
+
+    const result = await api.updateCarEngineStatus(this.id, 'started', signal);
     if (result == null) {
       return null;
     }
