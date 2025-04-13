@@ -60,13 +60,12 @@ export async function createCar(carData: Omit<CarData, 'id'>): Promise<CarData |
   if (!carData.color || !carData.name) {
     throw Error(ERR_ALL_REQUIRED);
   }
-  const body = stringifyCarData(carData);
   const response = await fetchData(Endpoint.Cars, null, {
     method: HttpMethod.Post,
     headers: {
       'Content-Type': CONTENT_TYPE,
     },
-    body,
+    body: stringifyCarData(carData),
   });
   const data: unknown = await response?.json();
   if (!isCarData(data)) {
@@ -91,14 +90,13 @@ export async function updateCar(
   if (!carData.color && !carData.name && !carData.type) {
     throw Error(ERR_AT_LEAST_ONE_REQUIRED);
   }
-  const body = stringifyCarData(carData);
   const path = `${Endpoint.Cars.toString()}/${id.toString()}`;
   const response = await fetchData(path, null, {
     method: HttpMethod.Patch,
     headers: {
       'Content-Type': CONTENT_TYPE,
     },
-    body,
+    body: stringifyCarData(carData),
   });
   const data: unknown = await response?.json();
   if (!isCarData(data)) {

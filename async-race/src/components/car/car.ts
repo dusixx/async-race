@@ -183,7 +183,13 @@ export class Car {
     return parseFloat(getComputedStyle(this.wrapper.node).width);
   }
 
-  private updateStyle(carDistancePerFrame: number, wheelTurnAnglePerFrame: number): void {
+  private updateStyles({
+    carDistancePerFrame,
+    wheelTurnAnglePerFrame,
+  }: {
+    carDistancePerFrame: number;
+    wheelTurnAnglePerFrame: number;
+  }): void {
     const { wrapper, leftWheel, rightWheel } = this;
 
     wrapper.node.style.transform = `translate(${carDistancePerFrame.toString()}px)`;
@@ -208,9 +214,10 @@ export class Car {
       if (this.status !== 'started') {
         return;
       }
-      const carDistancePerFrame = effectiveDistancePx * progress;
-      const wheelTurnAnglePerFrame = wheelSpinTotalAngle * progress;
-      this.updateStyle(carDistancePerFrame, wheelTurnAnglePerFrame);
+      this.updateStyles({
+        carDistancePerFrame: effectiveDistancePx * progress,
+        wheelTurnAnglePerFrame: wheelSpinTotalAngle * progress,
+      });
 
       requestAnimationFrame(frame);
     };
