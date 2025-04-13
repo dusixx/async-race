@@ -5,6 +5,9 @@ const BASE_URL = `http://127.0.0.1:${BASE_PORT}`;
 
 export const CONTENT_TYPE = 'application/json';
 
+export const ERR_ALL_REQUIRED = `all fields are required`;
+export const ERR_AT_LEAST_ONE_REQUIRED = `at least one field is required`;
+
 export enum Endpoint {
   Cars = 'garage',
   Engine = 'engine',
@@ -17,9 +20,6 @@ export enum HttpMethod {
   Patch = 'PATCH',
   Delete = 'DELETE',
 }
-
-export const ERR_ALL_REQUIRED = `all fields except 'id' are required`;
-export const ERR_AT_LEAST_ONE_REQUIRED = `at least one field is required`;
 
 const createQueryString = (parameters: QueryParameters | null): string => {
   if (!parameters) {
