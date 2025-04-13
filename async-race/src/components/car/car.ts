@@ -103,18 +103,15 @@ export class Car {
   }
 
   public async updateCarData(): Promise<UpdateStatus | null> {
-    const { name, color, type } = this;
-    const carData = { name, color, type };
-
     if (!this.isExists) {
-      const data = await api.createCar(carData);
+      const data = await api.createCar(this);
       if (!data) {
         return null;
       }
       this._id = data.id;
       return 'created';
     } else {
-      await api.updateCar(this._id, carData);
+      await api.updateCar(this._id, this);
       return 'updated';
     }
   }

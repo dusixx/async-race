@@ -81,7 +81,6 @@ export class CarEditor extends Modal {
       this.currentCar
         .updateCarData()
         .then((status) => {
-          console.debug(status);
           if (status === 'created') {
             this.onCreate?.();
           } else {
