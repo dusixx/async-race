@@ -85,8 +85,7 @@ export class Car {
     if (delayBeforeStart) {
       await delayBeforeStart;
     }
-    this._drive();
-
+    this.switchToDriveMode();
     this.startAnimation(durationMs, distancePx);
   }
 
@@ -111,7 +110,7 @@ export class Car {
       this._id = data.id;
       return 'created';
     } else {
-      await api.updateCar(this._id, this);
+      await api.updateCar(this);
       return 'updated';
     }
   }
@@ -129,7 +128,7 @@ export class Car {
     }
   }
 
-  private _drive(): void {
+  private switchToDriveMode(): void {
     this.abortController = new AbortController();
     const { signal } = this.abortController;
 
@@ -184,15 +183,15 @@ export class Car {
   }
 
   private updateStyles({
-    carDistancePerFrame,
+    distancePerFrame,
     wheelTurnAnglePerFrame,
   }: {
-    carDistancePerFrame: number;
+    distancePerFrame: number;
     wheelTurnAnglePerFrame: number;
   }): void {
     const { wrapper, leftWheel, rightWheel } = this;
 
-    wrapper.node.style.transform = `translate(${carDistancePerFrame.toString()}px)`;
+    wrapper.node.style.transform = `translate(${distancePerFrame.toString()}px)`;
     leftWheel.style.transform = `rotate(${wheelTurnAnglePerFrame.toString()}deg)`;
     rightWheel.style.transform = `rotate(${wheelTurnAnglePerFrame.toString()}deg)`;
   }
@@ -215,7 +214,7 @@ export class Car {
         return;
       }
       this.updateStyles({
-        carDistancePerFrame: effectiveDistancePx * progress,
+        distancePerFrame: effectiveDistancePx * progress,
         wheelTurnAnglePerFrame: wheelSpinTotalAngle * progress,
       });
 

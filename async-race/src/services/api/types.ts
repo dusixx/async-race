@@ -26,6 +26,8 @@ export type CarData = {
   type: CarViewType;
 };
 
+export type CarDataPartial = Partial<CarData> & { id: number };
+
 export type AllCarsData = {
   items: CarData[];
   totalCount: number;

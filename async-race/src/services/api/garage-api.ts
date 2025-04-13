@@ -1,7 +1,7 @@
 import { getRandomCarViewType } from '../../components/car/utils/misc.ts';
 import { getRandomHexColor } from '../../utils/color.ts';
 import { getRandomCarName } from '../../utils/misc.ts';
-import type { AllCarsData, CarDriveStatusType } from './types.ts';
+import type { AllCarsData, CarDataPartial, CarDriveStatusType } from './types.ts';
 import {
   CarEngineStatus,
   type CarData,
@@ -83,14 +83,11 @@ export async function deleteCar(id: number): Promise<boolean> {
   return Boolean(response?.ok);
 }
 
-export async function updateCar(
-  id: number,
-  carData: Partial<Omit<CarData, 'id'>>
-): Promise<CarData | null> {
+export async function updateCar(carData: CarDataPartial): Promise<CarData | null> {
   if (!carData.color && !carData.name && !carData.type) {
     throw Error(ERR_AT_LEAST_ONE_REQUIRED);
   }
-  const path = `${Endpoint.Cars.toString()}/${id.toString()}`;
+  const path = `${Endpoint.Cars.toString()}/${carData.id.toString()}`;
   const response = await fetchData(path, null, {
     method: HttpMethod.Patch,
     headers: {
