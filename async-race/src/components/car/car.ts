@@ -186,12 +186,12 @@ export class Car {
     return parseFloat(getComputedStyle(this.wrapper.node).width);
   }
 
-  private updateStyle(step: number, angle: number): void {
+  private updateStyle(carDistancePerFrame: number, wheelTurnAnglePerFrame: number): void {
     const { wrapper, leftWheel, rightWheel } = this;
 
-    wrapper.node.style.transform = `translate(${step.toString()}px)`;
-    leftWheel.style.transform = `rotate(${angle.toString()}deg)`;
-    rightWheel.style.transform = `rotate(${angle.toString()}deg)`;
+    wrapper.node.style.transform = `translate(${carDistancePerFrame.toString()}px)`;
+    leftWheel.style.transform = `rotate(${wheelTurnAnglePerFrame.toString()}deg)`;
+    rightWheel.style.transform = `rotate(${wheelTurnAnglePerFrame.toString()}deg)`;
   }
 
   private startAnimation(durationMs: number, distancePx: number): void {
@@ -199,11 +199,9 @@ export class Car {
     const effectiveDistancePx = distancePx - this.getCarWidthPx();
     const wheelSpinTotalAngle = (FULL_ANGLE * effectiveDistancePx * WHEEL_MAX_TURNS_COUNT) / 1000;
 
-    const move = (): void => {
+    const frame = (): void => {
       const elapsed = performance.now() - startTime;
       const progress = timingFunction.easeOutQuint(elapsed / durationMs);
-      const step = effectiveDistancePx * progress;
-      const angle = wheelSpinTotalAngle * progress;
 
       if (progress >= ANIMATION_PROGRESS_THRESHOLD) {
         // abort drive mode
@@ -213,11 +211,13 @@ export class Car {
       if (this.status !== 'started') {
         return;
       }
-      this.updateStyle(step, angle);
+      const carDistancePerFrame = effectiveDistancePx * progress;
+      const wheelTurnAnglePerFrame = wheelSpinTotalAngle * progress;
+      this.updateStyle(carDistancePerFrame, wheelTurnAnglePerFrame);
 
-      requestAnimationFrame(move);
+      requestAnimationFrame(frame);
     };
 
-    move();
+    frame();
   }
 }
