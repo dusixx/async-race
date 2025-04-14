@@ -11,6 +11,7 @@ import type { CarViewType } from './utils/misc.ts';
 const FULL_ANGLE = 360;
 const ANIMATION_PROGRESS_THRESHOLD = 0.98;
 const WHEEL_MAX_TURNS_COUNT = 10;
+const WHEEL_SPIN_TOTAL_ANGLE_RATIO = 1000;
 
 export class Car {
   public readonly wrapper: ReturnType<typeof div>;
@@ -199,7 +200,8 @@ export class Car {
   private startAnimation(durationMs: number, distancePx: number): void {
     const startTime = performance.now();
     const effectiveDistancePx = distancePx - this.getCarWidthPx();
-    const wheelSpinTotalAngle = (FULL_ANGLE * effectiveDistancePx * WHEEL_MAX_TURNS_COUNT) / 1000;
+    const wheelSpinTotalAngle =
+      (FULL_ANGLE * effectiveDistancePx * WHEEL_MAX_TURNS_COUNT) / WHEEL_SPIN_TOTAL_ANGLE_RATIO;
 
     const frame = (): void => {
       const elapsed = performance.now() - startTime;

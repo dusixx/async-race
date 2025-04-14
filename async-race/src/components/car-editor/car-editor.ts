@@ -114,18 +114,19 @@ export class CarEditor extends Modal {
 
   private addCarTypeChangeHandler(): void {
     this.carType.addListener('change', ({ target }: Event) => {
-      if (target instanceof HTMLSelectElement) {
-        const { value } = target;
-        const { id, type: currentType } = this.currentCar ?? {};
+      if (!(target instanceof HTMLSelectElement)) {
+        return;
+      }
+      const { value } = target;
+      const { id, type: currentType } = this.currentCar ?? {};
 
-        const newType = isCarViewType(value) ? value : currentType;
-        const color = this.carColor.node.value;
-        const name = this.carName.node.value || this.currentCar?.name;
+      const newType = isCarViewType(value) ? value : currentType;
+      const color = this.carColor.node.value;
+      const name = this.carName.node.value || this.currentCar?.name;
 
-        if (newType !== currentType) {
-          const newCarView = new Car({ id, color, name, type: newType });
-          this.updateCarView(newCarView);
-        }
+      if (newType !== currentType) {
+        const newCarView = new Car({ id, color, name, type: newType });
+        this.updateCarView(newCarView);
       }
     });
   }
