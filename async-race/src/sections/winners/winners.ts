@@ -7,6 +7,7 @@ import type {
 import { EventType } from '../../constants/index.ts';
 import * as api from '../../services/api/index.ts';
 import type { WinnerData } from '../../services/api/types.ts';
+import { isError } from '../../utils/type-guards.ts';
 import type { WinnerTableRowData } from './utils/create-view.ts';
 import { createView, createWinnersTableContent } from './utils/create-view.ts';
 
@@ -59,7 +60,7 @@ export class Winners extends Element {
       this.paginator.currentPage = pageNumber;
       void this.updateTableContent(items);
     } catch (error) {
-      if (error instanceof Error) {
+      if (isError(error)) {
         console.debug(`fetchWinnersData: ${error.message}`);
       }
     }

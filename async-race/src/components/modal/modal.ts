@@ -8,6 +8,7 @@ import { isKeyPressed } from '../../utils/misc.js';
 import type { ModalContent, ModalProps, ModalResult, OnCloseModalHandler } from './types.js';
 import { createView } from './utils/create-view.js';
 
+import { isHTMLButtonElement, isHTMLElement } from '../../utils/type-guards.js';
 import styles from './modal.module.scss';
 
 const { body } = document;
@@ -65,7 +66,7 @@ export class Modal extends Element<HTMLDivElement> {
     this.contentRoot.removeChildren();
     if (typeof content === 'string') {
       this.contentRoot.node.insertAdjacentHTML('beforeend', content);
-    } else if (content instanceof HTMLElement) {
+    } else if (isHTMLElement(content)) {
       this.contentRoot.node.append(content);
     } else {
       this.contentRoot.append(content);
@@ -91,22 +92,23 @@ export class Modal extends Element<HTMLDivElement> {
   }
 
   private handleButtonClick = ({ target }: Event): void => {
-    if (target instanceof HTMLButtonElement) {
-      const { okButton, cancelButton, onBeforeConfirm } = this;
-      let result: ModalResult = 'confirmed';
+    if (!isHTMLButtonElement(target)) {
+      return;
+    }
+    const { okButton, cancelButton, onBeforeConfirm } = this;
+    let result: ModalResult = 'confirmed';
 
-      if (target !== okButton.node && target !== cancelButton.node) {
+    if (target !== okButton.node && target !== cancelButton.node) {
+      return;
+    }
+    result = target === okButton.node ? 'confirmed' : 'cancelled';
+    if (result === 'confirmed') {
+      // cancelled by user
+      if (onBeforeConfirm && !onBeforeConfirm()) {
         return;
       }
-      result = target === okButton.node ? 'confirmed' : 'cancelled';
-      if (result === 'confirmed') {
-        // cancelled by user
-        if (onBeforeConfirm && !onBeforeConfirm()) {
-          return;
-        }
-      }
-      this.close(result);
     }
+    this.close(result);
   };
 
   private handleDocumentKeydown = (event: KeyboardEvent): void => {
@@ -117,7 +119,7 @@ export class Modal extends Element<HTMLDivElement> {
 
   private render(flag: boolean): void {
     const { parent } = this;
-    if (parent instanceof HTMLElement) {
+    if (isHTMLElement(parent)) {
       const action = flag ? 'append' : 'removeChild';
       parent[action](this.node);
 

@@ -1,5 +1,6 @@
 import { getRandomHexColor } from '../../utils/color.ts';
 import { getRandomCarName } from '../../utils/misc.ts';
+import { isError, isHTMLInputElement, isHTMLSelectElement } from '../../utils/type-guards.ts';
 import type { Button } from '../base/button.ts';
 import type { Element } from '../base/element.ts';
 import { Car } from '../car/car.ts';
@@ -90,7 +91,7 @@ export class CarEditor extends Modal {
           }
         })
         .catch((error: unknown) => {
-          if (error instanceof Error) {
+          if (isError(error)) {
             console.debug(`updateCarData: ${error.message}`);
           }
         });
@@ -114,7 +115,7 @@ export class CarEditor extends Modal {
 
   private addCarTypeChangeHandler(): void {
     this.carType.addListener('change', ({ target }: Event) => {
-      if (!(target instanceof HTMLSelectElement)) {
+      if (!isHTMLSelectElement(target)) {
         return;
       }
       const { value } = target;
@@ -139,7 +140,7 @@ export class CarEditor extends Modal {
 
   private addColorChangeHandler(): void {
     this.carColor.addListener('input', ({ target }: Event) => {
-      if (this.currentCar && target instanceof HTMLInputElement) {
+      if (this.currentCar && isHTMLInputElement(target)) {
         this.currentCar.color = target.value;
       }
     });

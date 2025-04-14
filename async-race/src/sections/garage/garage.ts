@@ -6,6 +6,7 @@ import { Track } from '../../components/track/track.ts';
 import { EventType } from '../../constants/index.ts';
 import * as api from '../../services/api/index.ts';
 import type { CarData } from '../../services/api/types.ts';
+import { isError, isHTMLElement } from '../../utils/type-guards.ts';
 
 import type { ButtonsMap } from './utils/create-view.ts';
 import {
@@ -103,7 +104,7 @@ export class Garage extends Element {
       this.paginator.currentPage = pageNumber;
       this.disableButtons(false, ['reset']);
     } catch (error) {
-      if (error instanceof Error) {
+      if (isError(error)) {
         console.debug(`fetchCarsData: ${error.message}`);
       }
     }
@@ -155,15 +156,16 @@ export class Garage extends Element {
       if (this.status !== 'race') {
         return;
       }
-      if (target instanceof HTMLElement) {
-        const targetTrack = this.tracksMap.get(target);
-        if (targetTrack) {
-          this.status = 'needReset';
+      if (!isHTMLElement(target)) {
+        return;
+      }
+      const targetTrack = this.tracksMap.get(target);
+      if (targetTrack) {
+        this.status = 'needReset';
 
-          void updateScore(targetTrack);
-          showWinnerStatus(targetTrack);
-          this.showWinnerModal(targetTrack);
-        }
+        void updateScore(targetTrack);
+        showWinnerStatus(targetTrack);
+        this.showWinnerModal(targetTrack);
       }
     });
   }
@@ -179,7 +181,7 @@ export class Garage extends Element {
 
   private addTrackRemoveListener(): void {
     this.addListener(EventType.TrackRemove, ({ target }) => {
-      if (target instanceof HTMLElement) {
+      if (isHTMLElement(target)) {
         this.removeTrackByNode(target);
       }
     });
@@ -190,7 +192,7 @@ export class Garage extends Element {
       await api.createCars(CARS_PER_GENERATION);
       await this.fetchCarsData(this.paginator.currentPage);
     } catch (error) {
-      if (error instanceof Error) {
+      if (isError(error)) {
         console.debug(`generateCarsAndRefetch: ${error.message}`);
       }
     }
@@ -201,7 +203,7 @@ export class Garage extends Element {
       this.disableButtons(true);
       this.generateCarsAndRefetch()
         .catch((error: unknown) => {
-          if (error instanceof Error) {
+          if (isError(error)) {
             console.debug(error.message);
           }
         })
