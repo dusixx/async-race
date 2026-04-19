@@ -1,13 +1,13 @@
-import type { Button } from '../base/button.ts';
-import { Element } from '../base/element.ts';
-import { createView } from './utils/create-view.ts';
-
+import type { Button } from '@components';
+import { Element } from '@components';
+import { createView } from './create-view/create-view.ts';
+import {
+  MIN_ITEMS_PER_PAGE,
+  MIN_TOTAL_ITEMS,
+  PAGES_PER_CLICK,
+  START_PAGE_NUMBER,
+} from './paginator.constants.ts';
 import styles from './paginator.module.scss';
-
-const START_PAGE_NUMBER = 1;
-const MIN_ITEMS_PER_PAGE = 1;
-const MIN_TOTAL_ITEMS = 1;
-const PAGES_PER_CLICK = 1;
 
 type OnChangeHandler = ((newPage: number) => void) | null;
 

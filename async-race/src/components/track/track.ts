@@ -1,23 +1,17 @@
-import { EventType, Icon } from '../../constants/index.ts';
-import { getFinishingTimeSecs } from '../../sections/garage/utils/misc.ts';
-import * as api from '../../services/api/index.ts';
-import type { CarData } from '../../services/api/types.ts';
-import { Element } from '../base/element.ts';
-import { CarEditor } from '../car-editor/car-editor.ts';
-import { Car } from '../car/car.ts';
-
+import type { ButtonsMap } from '@common';
+import { EventName, Icon, toggleButtons } from '@common';
+import { Car, CarEditor, Element } from '@components';
+import { getFinishingTimeSecs } from '@components/garage/garage.utils.ts';
+import * as api from '@services/api';
+import type { CarData } from '@services/api/garage/garage-api.types.ts';
+import { createView } from './create-view/create-view.ts';
+import {
+  BROKEN_STATUS_TEXT,
+  CAR_LEFT_CSS_VAR,
+  CAR_LEFT_PX,
+  StatusColor,
+} from './track.constants.ts';
 import styles from './track.module.scss';
-import type { ButtonsMap } from './utils/create-view.ts';
-import { createView } from './utils/create-view.ts';
-
-const CAR_LEFT_PX = 35;
-const CAR_LEFT_CSSVAR = '--car-left';
-const BROKEN_STATUS_TEXT = 'connection lost';
-
-export enum StatusColor {
-  SuccessBg = 'var(--color-btn-bg-sec)',
-  ErrorBg = 'var(--color-accent)',
-}
 
 type ShowStatusProps = {
   message: string;
@@ -51,7 +45,6 @@ export class Track extends Element<HTMLDivElement> {
     this.overlay = overlay;
     this.hideStatus();
 
-    // relative to the track
     this.car.wrapper.toggleClass(styles.carPosition);
     this.append(overlay, headerWrapper, this.car.wrapper);
 
@@ -101,23 +94,17 @@ export class Track extends Element<HTMLDivElement> {
     return parseFloat(getComputedStyle(this.node).width);
   }
 
-  private disableButtons(flag: boolean, exceptNames: string[] = []): void {
-    Object.entries(this.buttons).forEach(([name, button]) => {
-      button.disabled = exceptNames.includes(name) ? !flag : flag;
-    });
-  }
-
   private addRemoveClickHandler(): void {
     const { remove } = this.buttons;
     remove.onClick = (): void => {
-      this.disableButtons(true);
+      toggleButtons(this.buttons, true);
       api
         .deleteCar(this.car.id)
         .then(() => {
           api
             .deleteWinner(this.car.id)
             .then(() => {
-              this.dispatch(EventType.TrackRemove);
+              this.dispatch(EventName.TrackRemove);
             })
             .catch(console.debug);
         })
@@ -126,7 +113,7 @@ export class Track extends Element<HTMLDivElement> {
   }
 
   private handleStopClick = (): void => {
-    this.disableButtons(true);
+    toggleButtons(this.buttons, true);
     void this.car.stop();
   };
 
@@ -136,7 +123,7 @@ export class Track extends Element<HTMLDivElement> {
   }
 
   private handleStartClick = (): void => {
-    this.disableButtons(true);
+    toggleButtons(this.buttons, true);
     const trackDistancePx = this.getTrackWidthPx() - CAR_LEFT_PX;
     void this.car.drive(trackDistancePx, this.delayBeforeStart);
   };
@@ -157,7 +144,7 @@ export class Track extends Element<HTMLDivElement> {
         }
         case 'starting': {
           stop.disabled = this.isRaceOn;
-          this.dispatch(EventType.TrackStarting);
+          this.dispatch(EventName.TrackStarting);
           break;
         }
         case 'started': {
@@ -168,15 +155,15 @@ export class Track extends Element<HTMLDivElement> {
         case 'stopped': {
           this.hideStatus();
           this.delayBeforeStart = undefined;
-          this.disableButtons(false, ['stop']);
-          this.dispatch(EventType.TrackStopped);
+          toggleButtons(this.buttons, false, ['stop']);
+          this.dispatch(EventName.TrackStopped);
           this.onStopped?.();
           break;
         }
         case 'finished': {
           const time = getFinishingTimeSecs(this.car.stats).toString();
           this.showStatus({ message: `finished in ${time}`, success: true });
-          this.dispatch(EventType.TrackFinished);
+          this.dispatch(EventName.TrackFinished);
         }
       }
     };
@@ -208,8 +195,8 @@ export class Track extends Element<HTMLDivElement> {
 
   private init(): void {
     // enable all but stop
-    this.disableButtons(false, ['stop']);
-    this.node.style.setProperty(CAR_LEFT_CSSVAR, `${CAR_LEFT_PX.toString()}px`);
+    toggleButtons(this.buttons, false, ['stop']);
+    this.node.style.setProperty(CAR_LEFT_CSS_VAR, `${CAR_LEFT_PX.toString()}px`);
 
     this.addCarChangeStatusHandler();
     this.addStartClickHandler();

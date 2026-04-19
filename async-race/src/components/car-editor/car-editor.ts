@@ -1,22 +1,18 @@
-import { getRandomHexColor } from '../../utils/color.ts';
-import { getRandomCarName } from '../../utils/misc.ts';
-import { isError, isHTMLInputElement, isHTMLSelectElement } from '../../utils/type-guards.ts';
-import type { Button } from '../base/button.ts';
-import type { Element } from '../base/element.ts';
-import { Car } from '../car/car.ts';
-import { isCarViewType } from '../car/utils/misc.ts';
-import { Modal } from '../modal/modal.ts';
-import { createView } from './utils/create-view.ts';
+import { getRandomCarName, isError, isHTMLInputElement, isHTMLSelectElement } from '@common';
+import type { Button, Element } from '@components';
+import { Car, Modal } from '@components';
+import { isCarViewType } from '@components/car/create-view/create-view.utils.ts';
+import { createRandomCar } from './car-editor.utils.ts';
+import { createView } from './create-view/create-view.ts';
 
 const UPDATE_HEADING = 'Update car';
 const CREATE_HEADING = 'Add new car';
 
-type OnCreateHnadler = (() => void) | null;
-
+type OnCreateHandler = (() => void) | null;
 type OnUpdateHandler = ((updatedCar: Car) => void) | null;
 
 export class CarEditor extends Modal {
-  public onCreate: OnCreateHnadler = null;
+  public onCreate: OnCreateHandler = null;
   public onUpdate: OnUpdateHandler = null;
   private carColor: Element<HTMLInputElement>;
   private carName: Element<HTMLInputElement>;
@@ -43,24 +39,14 @@ export class CarEditor extends Modal {
 
   public showUpdateDialog(car: Car): void {
     this.heading.text = car.id ? `${UPDATE_HEADING} #${car.id.toString()}` : UPDATE_HEADING;
-
-    const { type, id, color, name } = car;
-    const carCopy = new Car({ id, name, color, type });
-
+    const carCopy = new Car(car);
     this.updateCarView(carCopy);
-
     this.open();
   }
 
   public showCreateDialog(): void {
     this.heading.text = CREATE_HEADING;
-
-    const car = new Car({
-      name: getRandomCarName(),
-      color: getRandomHexColor(),
-    });
-    this.updateCarView(car);
-
+    this.updateCarView(createRandomCar());
     this.open();
   }
 

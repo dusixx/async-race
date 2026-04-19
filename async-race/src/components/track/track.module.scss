@@ -73,8 +73,6 @@ $landscape-image-url: './landscape.png';
   padding: var(--track-header-padding);
   padding-right: 10px;
   padding-left: var(--track-header-padding-left);
-
-  // border: 1px solid rgb(218 222 226);
   border-radius: var(--border-radius);
 
   background-color: white;
@@ -131,7 +129,7 @@ $landscape-image-url: './landscape.png';
   font-size: 16px;
   color: white;
 
-  // animation: pulse 2s ease-in-out infinite alternate;
+  animation: pulse 1s ease-in-out infinite alternate;
 }
 
 .status-text {
@@ -156,12 +154,12 @@ $landscape-image-url: './landscape.png';
   }
 }
 
-// @keyframes pulse {
-//   from {
-//     transform: scale(1);
-//   }
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
 
-//   to {
-//     transform: scale(1.2);
-//   }
-// }
+  to {
+    transform: scale(1.2);
+  }
+}

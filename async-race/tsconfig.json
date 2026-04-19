@@ -28,7 +28,26 @@
     "alwaysStrict": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
-    "useUnknownInCatchVariables": true
+    "useUnknownInCatchVariables": true,
+
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@components": ["src/components"],
+      "@common/*": ["src/common/*"],
+      "@common": ["src/common"],
+      "@app/*": ["src/app/*"],
+      "@app": ["src/app"],
+      "@services/*": ["src/services/*"],
+      "@services": ["src/services"],
+      "@styles/*": ["src/styles/*"],
+      "@styles": ["src/styles"],
+      "@router/*": ["src/router/*"],
+      "@router": ["src/router"],
+      "@data/*": ["src/data/*"],
+      "@data": ["src/data"]
+    }
   },
   "include": [
     "src",

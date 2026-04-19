@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-export default `
+export const monkey = `
   <svg viewBox="0 0 71 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path id="shadow" fill="#000" style="fill: var(--color1, #000)"
         d="M70.584 31.503c0 0.274-15.73 0.497-35.133 0.497s-35.133-0.223-35.133-0.497c0-0.274 15.73-0.497 35.133-0.497s35.133 0.223 35.133 0.497z">

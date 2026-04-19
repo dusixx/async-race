@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-export default `
+export const turtle = `
     <svg viewBox="0 0 70 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path id="shadow" fill="#000" style="fill: var(--color1, #000)"
         d="M68.523 31.564c0 0.241-15.044 0.436-33.601 0.436s-33.601-0.195-33.601-0.436 15.044-0.436 33.601-0.436 33.601 0.195 33.601 0.436z">

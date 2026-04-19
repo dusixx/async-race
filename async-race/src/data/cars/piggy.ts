@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-export default `
+export const piggy = `
     <svg  viewBox="0 0 67 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path id="shadow" fill="#000" style="fill: var(--color1, #000); opacity: 0.2;"
         d="M67.385 31.523c0 0.263-15.084 0.476-33.692 0.476s-33.693-0.213-33.693-0.476 15.084-0.476 33.692-0.476 33.692 0.213 33.692 0.476z">

@@ -1,4 +1,4 @@
-import type { BaseElementProps } from './create-element.ts';
+import type { BaseElementProps } from './index.ts';
 import { Element } from './index.ts';
 
 type Props<T extends HTMLElement = HTMLElement> = Omit<BaseElementProps<T>, 'tag'>;

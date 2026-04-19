@@ -1,17 +1,17 @@
-import * as api from '../../services/api/garage-api.ts';
-import type { CarData } from '../../services/api/types.ts';
-import { getRandomHexColor, isValidHexColor } from '../../utils/color.ts';
-import { getRandomCarName } from '../../utils/misc.ts';
-import { timingFunction } from '../../utils/timing-funcs.ts';
-import type { div } from '../base/index.ts';
-import type { CarStats, CarStatus, OnStatusChangeHandler, UpdateStatus } from './types.ts';
-import { ColorCSSVariableName, createView } from './utils/create-view.ts';
-import type { CarViewType } from './utils/misc.ts';
-
-const FULL_ANGLE = 360;
-const ANIMATION_PROGRESS_THRESHOLD = 0.98;
-const WHEEL_MAX_TURNS_COUNT = 10;
-const WHEEL_SPIN_TOTAL_ANGLE_RATIO = 1000;
+import { getRandomCarName, getRandomHexColor, isValidHexColor, timingFunction } from '@common';
+import type { div } from '@components';
+import * as api from '@services/api';
+import type { CarData } from '@services/api/garage/garage-api.types.ts';
+import {
+  ANIMATION_PROGRESS_THRESHOLD,
+  FULL_ANGLE,
+  WHEEL_MAX_TURNS_COUNT,
+  WHEEL_SPIN_TOTAL_ANGLE_RATIO,
+} from './car.constants.ts';
+import type { CarStats, CarStatus, OnStatusChangeHandler, UpdateStatus } from './car.types.ts';
+import { BODY_COLOR_CSS_VAR } from './create-view/create-view.constants.ts';
+import { createView } from './create-view/create-view.ts';
+import type { CarViewType } from './create-view/create-view.types.ts';
 
 export class Car {
   public readonly wrapper: ReturnType<typeof div>;
@@ -169,7 +169,7 @@ export class Car {
     if (!isValidHexColor(color)) {
       return;
     }
-    this.wrapper.node.style.setProperty(ColorCSSVariableName.Body, color);
+    this.wrapper.node.style.setProperty(BODY_COLOR_CSS_VAR, color);
     this._color = color;
   }
 

@@ -1,2 +1,2 @@
-export * from './garage-api.ts';
-export * from './winners-api.ts';
+export * from './garage/garage-api.ts';
+export * from './winners/winners-api.ts';

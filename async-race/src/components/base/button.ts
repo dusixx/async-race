@@ -1,4 +1,4 @@
-import type { BaseElementProps } from './create-element.js';
+import type { BaseElementProps } from './base-element/base-element.js';
 import { Element } from './element.js';
 
 export class Button extends Element<HTMLButtonElement> {

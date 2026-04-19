@@ -1,15 +1,7 @@
-import type { Element } from '../components/base/element.ts';
-import type { Router } from '../router/router.ts';
-import { Garage } from '../sections/garage/garage.ts';
-import { Winners } from '../sections/winners/winners.ts';
-
-export enum Pathname {
-  Root = '/',
-  Garage = '/garage',
-  Winners = '/winners',
-  Index = '/index',
-  NotFound = '/{404}',
-}
+import { Pathname } from '@common';
+import type { Element } from '@components';
+import { Garage, Winners } from '@components';
+import type { Router } from '@router/router.ts';
 
 export type Route = {
   pathname: string;

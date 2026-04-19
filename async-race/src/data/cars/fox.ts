@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-export default `
+export const fox = `
     <svg viewBox="0 0 71 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path id="shadow" fill="#000" style="fill: var(--color1, #000)"
         d="M70.978 31.479c0 0.288-15.886 0.521-35.483 0.521s-35.483-0.233-35.483-0.521c0-0.288 15.886-0.521 35.483-0.521s35.483 0.233 35.483 0.521z">

@@ -1,20 +1,13 @@
-import { Icon, Visibility } from '../../constants/index.ts';
-import type { BaseElementProps } from '../base/create-element.ts';
-import { Element } from '../base/element.ts';
-import { span } from '../base/tags.ts';
-
-export type SortOrder = 'asc' | 'desc';
-
-type Props = Omit<BaseElementProps<HTMLLIElement>, 'tag'>;
-
-type OnChangeHandler = ((order: SortOrder) => void) | null;
+import { Icon, Visibility } from '@common';
+import { Element, span } from '@components';
+import type { OnChangeHandler, SortOrder, SortableColumnProps } from './sortable-column.types.ts';
 
 export class SortableColumn extends Element<HTMLLIElement> {
   public onChange: OnChangeHandler = null;
   private _sortOrder: SortOrder = 'asc';
   private marker: ReturnType<typeof span>;
 
-  constructor(props?: Props, ...children: (Element | null)[]) {
+  constructor(props?: SortableColumnProps, ...children: (Element | null)[]) {
     super({ tag: 'li', ...props }, ...children);
 
     this.marker = span({ text: Icon.ArrowDown });

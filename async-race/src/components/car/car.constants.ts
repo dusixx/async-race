@@ -1,0 +1,4 @@
+export const FULL_ANGLE = 360;
+export const ANIMATION_PROGRESS_THRESHOLD = 0.98;
+export const WHEEL_MAX_TURNS_COUNT = 10;
+export const WHEEL_SPIN_TOTAL_ANGLE_RATIO = 1000;

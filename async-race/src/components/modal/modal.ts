@@ -1,15 +1,15 @@
-import type { Button } from '../base/index.js';
-import { Element } from '../base/index.js';
-import type { div } from './../base/tags';
-import { scrollLock } from './utils/scroll-lock.js';
-
-import { KeyboardEventKey, Visibility } from '../../constants/index.js';
-import { isKeyPressed } from '../../utils/misc.js';
-import type { ModalContent, ModalProps, ModalResult, OnCloseModalHandler } from './types.js';
-import { createView } from './utils/create-view.js';
-
-import { isHTMLButtonElement, isHTMLElement } from '../../utils/type-guards.js';
+import {
+  isHTMLButtonElement,
+  isHTMLElement,
+  isKeyPressed,
+  KeyboardEventKey,
+  Visibility,
+} from '@common';
+import type { Button, div } from '@components';
+import { Element, ScrollLock } from '@components';
+import { createView } from './create-view/create-view.js';
 import styles from './modal.module.scss';
+import type { ModalContent, ModalProps, ModalResult, OnCloseModalHandler } from './modal.types.js';
 
 const { body } = document;
 
@@ -132,7 +132,7 @@ export class Modal extends Element<HTMLDivElement> {
 
   private toggle(flag: boolean): void {
     if (flag) {
-      scrollLock.toggle(true);
+      ScrollLock.toggle(true);
       document.addEventListener('keydown', this.handleDocumentKeydown);
 
       requestAnimationFrame(() => this.toggleClass(styles.active, true));
@@ -140,7 +140,7 @@ export class Modal extends Element<HTMLDivElement> {
 
       return;
     }
-    scrollLock.toggle(false);
+    ScrollLock.toggle(false);
     document.removeEventListener('keydown', this.handleDocumentKeydown);
     this.toggleClass(styles.active, false);
     this.addListener(

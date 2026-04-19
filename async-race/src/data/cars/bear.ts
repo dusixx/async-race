@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-export default `
+export const bear = `
     <svg viewBox="0 0 66 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path id="shadow" fill="#000" style="fill: var(--color1, #000)"
         d="M66.022 31.533c0 0.258-14.779 0.467-33.011 0.467s-33.011-0.209-33.011-0.467c0-0.258 14.779-0.467 33.011-0.467s33.011 0.209 33.011 0.467z">

@@ -1,10 +1,7 @@
-import { main as MainSection } from '../components/base/index.ts';
-import { EventType } from '../constants/index.ts';
-import { Garage } from '../sections/garage/garage.ts';
-import type { NavSectionName } from '../sections/index.ts';
-import { HeaderSection } from '../sections/index.ts';
-import { Winners } from '../sections/winners/winners.ts';
-import { showStartMessageOnce } from './utils/misc.ts';
+import { EventName } from '@common';
+import type { NavSectionName } from '@components';
+import { Garage, HeaderSection, main as MainSection, Winners } from '@components';
+import { showStartMessageOnce } from './app.utils.ts';
 
 const header = new HeaderSection();
 const garage = new Garage();
@@ -16,13 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 header.onNavigate = (sectionName: NavSectionName): void => {
-  main.dispatch(EventType.BeforeContentChange);
+  main.dispatch(EventName.BeforeContentChange);
 
   if (sectionName === 'garage') {
-    main.dispatch(EventType.BeforeNavigateGarage);
+    main.dispatch(EventName.BeforeNavigateGarage);
     main.node.replaceChildren(garage.node);
   } else {
-    main.dispatch(EventType.BeforeNavigateWinners);
+    main.dispatch(EventName.BeforeNavigateWinners);
     main.node.replaceChildren(winners.node);
   }
 };
