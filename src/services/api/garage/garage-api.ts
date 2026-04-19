@@ -104,7 +104,7 @@ export async function updateCarEngineStatus(
   try {
     const response = await fetchData(
       Endpoint.Engine.toString(),
-      { id, status: status.toString() },
+      { id, status },
       { method: HttpMethod.Patch, signal }
     );
     const data: unknown = await response?.json();

@@ -1,6 +1,5 @@
 {
   "name": "async-race",
-  "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -15,9 +14,10 @@
     "stylelint": "stylelint \"**/*.{css,scss}\"",
     "stylelint:fix": "stylelint \"**/*.{css,scss}\" --fix",
     "lint:fix-all": "(npm run stylelint:fix) || true && npm run lint:fix",
-    "prepare": "cd .. && husky ./async-race/.husky",
+    "prepare": "husky .husky",
     "test": "echo 'hello' && exit 1",
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "fix:deps": "rm -rf node_modules package-lock.json && npm cache clean --force && npm i"
   },
   "husky": {
     "hooks": {

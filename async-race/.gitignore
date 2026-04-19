@@ -1,5 +1,0 @@
-*.bak
-backup/
-node_modules/
-dist/
-.vscode/
