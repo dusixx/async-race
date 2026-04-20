@@ -1,8 +1,8 @@
 import { div } from '@components';
+import { carMarkup } from '@data';
 import styles from '../car.module.scss';
 import {
   BODY_COLOR_CSS_VAR,
-  CarViewMarkup,
   CarViewSelector,
   ERR_WHEEL_ELEMENT_NOT_FOUND,
   SHADOW_OPACITY,
@@ -16,7 +16,7 @@ export const createView = (color: string, type: CarViewType | undefined): CarVie
 
   type = type || getRandomCarViewType();
 
-  node.insertAdjacentHTML('beforeend', CarViewMarkup[type]);
+  node.insertAdjacentHTML('beforeend', carMarkup[type]);
   node.style.setProperty(BODY_COLOR_CSS_VAR, color);
 
   const svgElement = node.children[0];

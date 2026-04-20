@@ -1,6 +1,15 @@
-export * from './bear.ts';
-export * from './fox.ts';
-export * from './monkey.ts';
-export * from './piggy.ts';
-export * from './turtle.ts';
-export * from './wolf.ts';
+import { bear } from './bear.ts';
+import { fox } from './fox.ts';
+import { monkey } from './monkey.ts';
+import { piggy } from './piggy.ts';
+import { turtle } from './turtle.ts';
+import { wolf } from './wolf.ts';
+
+export const carMarkup = {
+  bear,
+  fox,
+  monkey,
+  piggy,
+  turtle,
+  wolf,
+};

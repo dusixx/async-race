@@ -1,5 +1,5 @@
 import { Button, div, input, label, option, select, span } from '@components';
-import { CarViewMarkup } from '@components/car/create-view/create-view.constants.ts';
+import { carMarkup } from '@data';
 import styles from '../car-editor.module.scss';
 import {
   COLOR_INPUT_ID,
@@ -17,7 +17,7 @@ const createTypeSelectWrapper = (): {
   typeSelectWrapper: ReturnType<typeof div>;
   typeSelect: ReturnType<typeof select>;
 } => {
-  const options = Object.keys(CarViewMarkup).map((type) => {
+  const options = Object.keys(carMarkup).map((type) => {
     return option({ text: type, value: type });
   });
   const typeSelect = select({ className: styles.typeSelect, id: TYPE_SELECT_ID }, ...options);
