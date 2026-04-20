@@ -10,11 +10,9 @@ import {
 import type { CarView, CarViewType } from './create-view.types.ts';
 import { getRandomCarViewType } from './create-view.utils.ts';
 
-export const createView = (color: string, type: CarViewType | undefined): CarView => {
+export const createView = (color: string, type: CarViewType = getRandomCarViewType()): CarView => {
   const wrapper = div({ className: styles.wrapper });
   const { node } = wrapper;
-
-  type = type || getRandomCarViewType();
 
   node.insertAdjacentHTML('beforeend', carMarkup[type]);
   node.style.setProperty(BODY_COLOR_CSS_VAR, color);
