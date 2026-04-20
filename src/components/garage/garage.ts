@@ -1,4 +1,3 @@
-import type { ButtonsMap } from '@common';
 import { EventName, isError, isHTMLElement, toggleButtons } from '@common';
 import type { Paginator } from '@components';
 import { CarEditor, Element, Modal, Track } from '@components';
@@ -9,13 +8,14 @@ import {
   createWinnerModalView,
   getWinnerInfoDetailsMarkup,
 } from './create-view/create-view.ts';
+import type { ButtonsMap } from './create-view/create-view.types.ts';
 import { showWinnerStatus, updateScore } from './garage.utils.ts';
 
 const TRACKS_PER_PAGE = 7;
 const DEFAULT_PAGE_NUMBER = 1;
 const CARS_PER_GENERATION = 100;
 
-type GarageStatus = 'race' | 'resetting' | 'ready' | 'needReset';
+type GarageStatus = 'race' | 'resetting' | 'ready' | 'need-reset';
 
 export class Garage extends Element {
   public status: GarageStatus = 'ready';
@@ -155,7 +155,7 @@ export class Garage extends Element {
       }
       const targetTrack = this.tracksMap.get(target);
       if (targetTrack) {
-        this.status = 'needReset';
+        this.status = 'need-reset';
 
         void updateScore(targetTrack);
         showWinnerStatus(targetTrack);

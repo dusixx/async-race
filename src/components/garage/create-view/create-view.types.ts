@@ -1,5 +1,7 @@
-import type { ButtonsMap } from '@common';
-import type { div, Paginator, span } from '@components';
+import type { Button, div, Paginator, span } from '@components';
+import type { ButtonText } from './create-view.constants.ts';
+
+export type ButtonsMap = Record<keyof typeof ButtonText, Button>;
 
 export type GarageView = {
   buttonsMap: ButtonsMap;

@@ -1,7 +1,7 @@
 import { Pathname } from '@common';
 import type { Element } from '@components';
 import { Garage, Winners } from '@components';
-import type { Router } from '@router/router.ts';
+import type { Router } from '@router';
 
 export type Route = {
   pathname: string;

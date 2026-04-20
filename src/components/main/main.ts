@@ -2,7 +2,7 @@ import type { Route } from '@app/routes.ts';
 import { routes } from '@app/routes.ts';
 import { EventName } from '@common';
 import { Element } from '@components';
-import { Router } from '@router/router.ts';
+import { Router } from '@router';
 
 export class MainSection extends Element {
   private router: Router;

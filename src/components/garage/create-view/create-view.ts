@@ -1,4 +1,4 @@
-import type { ButtonsMap } from '@common/index.ts';
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { Track } from '@components';
 import { Button, div, img, Paginator, span } from '@components';
 import styles from '../garage.module.scss';
@@ -9,7 +9,7 @@ import {
   REWARD_IMG_SRC,
   TOTAL_CARS_TEXT,
 } from './create-view.constants.ts';
-import type { GarageView } from './create-view.types.ts';
+import type { ButtonsMap, GarageView } from './create-view.types.ts';
 
 export const getWinnerInfoDetailsMarkup = (targetTrack: Track): string => {
   const { car } = targetTrack;
@@ -36,14 +36,13 @@ export const createWinnerModalView = (): {
     alt: REWARD_IMG_ALT,
   });
   const winnerInfo = div({ className: styles.winnerInfo });
-
   winnerInfoWrapper.append(image, winnerInfo);
 
   return { winnerInfoWrapper, winnerInfo };
 };
 
 const createButtonsMap = (): ButtonsMap => {
-  const buttonsMap: ButtonsMap = {};
+  const buttonsMap: Record<string, Button> = {};
 
   Object.entries(ButtonText).map(([name, text]) => {
     const button = new Button({ className: styles.button, title: name, text });
@@ -60,7 +59,7 @@ const createButtonsMap = (): ButtonsMap => {
     return button;
   });
 
-  return buttonsMap;
+  return buttonsMap as ButtonsMap;
 };
 
 export const createView = (): GarageView => {

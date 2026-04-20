@@ -1,15 +1,16 @@
-import type { ButtonsMap } from '@common';
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { Button } from '../../base/button.ts';
 import { div, span } from '../../base/index.ts';
 import { svg } from '../../base/svg-element.ts';
 import styles from '../track.module.scss';
 import { ButtonIconId, ICONS_FILE_PATH } from './create-view.constants.ts';
+import type { ButtonsMap } from './create-view.types.ts';
 
 const createButtonsWrapper = (): {
   buttonsMap: ButtonsMap;
   buttonsWrapper: ReturnType<typeof div>;
 } => {
-  const buttonsMap: ButtonsMap = {};
+  const buttonsMap: Record<string, Button> = {};
 
   const buttonsArray = Object.entries(ButtonIconId).map(([name, iconId]) => {
     const icon = svg(null, { href: `${ICONS_FILE_PATH}#${iconId}` });
@@ -26,10 +27,12 @@ const createButtonsWrapper = (): {
 
     return button;
   });
-
   const buttonsWrapper = div({ className: styles.buttons }, ...buttonsArray);
 
-  return { buttonsWrapper, buttonsMap };
+  return {
+    buttonsWrapper,
+    buttonsMap: buttonsMap as ButtonsMap,
+  };
 };
 
 export const createView = (): {

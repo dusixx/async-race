@@ -1,10 +1,10 @@
-import type { ButtonsMap } from '@common';
 import { EventName, Icon, toggleButtons } from '@common';
 import { Car, CarEditor, Element } from '@components';
 import { getFinishingTimeSecs } from '@components/garage/garage.utils.ts';
 import * as api from '@services/api';
 import type { CarData } from '@services/api/garage/garage-api.types.ts';
 import { createView } from './create-view/create-view.ts';
+import type { ButtonsMap } from './create-view/create-view.types.ts';
 import {
   BROKEN_STATUS_TEXT,
   CAR_LEFT_CSS_VAR,

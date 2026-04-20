@@ -3,8 +3,7 @@ export * from './color.ts';
 export * from './timing-funcs.ts';
 export * from './type-guards.ts';
 
-import type { ButtonsMap } from '@common/types/index.ts';
-import type { Element } from '@components';
+import type { Button, Element } from '@components';
 import { Modal } from '@components';
 import brands from '@data/brands.ts';
 import type { KeyboardEventKey } from '../constants/index.ts';
@@ -72,7 +71,7 @@ export const showModalMessage = (htmlText: string, parent?: Element | HTMLElemen
 };
 
 export const toggleButtons = (
-  buttons: ButtonsMap,
+  buttons: Record<string, Button>,
   flag: boolean,
   exceptNames: string[] = []
 ): void => {
