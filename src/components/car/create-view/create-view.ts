@@ -27,7 +27,6 @@ export const createView = (color: string, type: CarViewType = getRandomCarViewTy
   if (shadow) {
     shadow.style.opacity = SHADOW_OPACITY;
   }
-
   if (!rightWheel || !leftWheel) {
     throw Error(ERR_WHEEL_ELEMENT_NOT_FOUND);
   }
