@@ -1,7 +1,7 @@
 export * from './base';
 export * from './modal/modal.ts';
 export * from './paginator/paginator.ts';
-export * from './scroll-lock.ts';
+export * from './scroll-lock/scroll-lock.ts';
 export * from './sortable-column/sortable-column.ts';
 
 export * from './car-editor/car-editor.ts';
