@@ -1,4 +1,3 @@
-export * from '../../services/api/shared/http-error.ts';
 export * from './color.ts';
 export * from './timing-funcs.ts';
 export * from './type-guards.ts';
