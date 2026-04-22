@@ -9,7 +9,7 @@ import {
   REWARD_IMG_SRC,
   TOTAL_CARS_TEXT,
 } from './create-view.constants.ts';
-import type { ButtonsMap, GarageView } from './create-view.types.ts';
+import type { ButtonMap, GarageView } from './create-view.types.ts';
 
 export const getWinnerInfoDetailsMarkup = (targetTrack: Track): string => {
   const { car } = targetTrack;
@@ -41,7 +41,7 @@ export const createWinnerModalView = (): {
   return { winnerInfoWrapper, winnerInfo };
 };
 
-const createButtonsMap = (): ButtonsMap => {
+const createButtonsMap = (): ButtonMap => {
   const buttonsMap: Record<string, Button> = {};
 
   Object.entries(ButtonText).map(([name, text]) => {
@@ -59,7 +59,7 @@ const createButtonsMap = (): ButtonsMap => {
     return button;
   });
 
-  return buttonsMap as ButtonsMap;
+  return buttonsMap as ButtonMap;
 };
 
 export const createView = (): GarageView => {

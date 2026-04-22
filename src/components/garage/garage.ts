@@ -8,7 +8,7 @@ import {
   createWinnerModalView,
   getWinnerInfoDetailsMarkup,
 } from './create-view/create-view.ts';
-import type { ButtonsMap } from './create-view/create-view.types.ts';
+import type { ButtonMap } from './create-view/create-view.types.ts';
 import { showWinnerStatus, updateScore } from './garage.utils.ts';
 
 const TRACKS_PER_PAGE = 7;
@@ -19,7 +19,7 @@ type GarageStatus = 'race' | 'resetting' | 'ready' | 'need-reset';
 
 export class Garage extends Element {
   public status: GarageStatus = 'ready';
-  private buttons: ButtonsMap;
+  private buttons: ButtonMap;
   private tracksMap: Map<HTMLElement, Track> = new Map();
   private tracksWrapper: Element<HTMLDivElement>;
   private totalCounter: Element<HTMLSpanElement>;

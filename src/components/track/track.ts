@@ -4,7 +4,7 @@ import { getFinishingTimeSecs } from '@components/garage/garage.utils.ts';
 import * as api from '@services/api';
 import type { CarData } from '@services/api/garage/garage-api.types.ts';
 import { createView } from './create-view/create-view.ts';
-import type { ButtonsMap } from './create-view/create-view.types.ts';
+import type { ButtonMap } from './create-view/create-view.types.ts';
 import {
   BROKEN_STATUS_TEXT,
   CAR_LEFT_CSS_VAR,
@@ -25,7 +25,7 @@ export class Track extends Element<HTMLDivElement> {
   public onStarted: (() => void) | null = null;
   public onStopped: (() => void) | null = null;
   private carName: Element<HTMLSpanElement>;
-  private buttons: ButtonsMap;
+  private buttons: ButtonMap;
   private carEditor: CarEditor = new CarEditor();
   private statusInfo: Element<HTMLSpanElement>;
   private overlay: Element<HTMLDivElement>;

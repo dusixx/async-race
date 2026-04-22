@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
-import { Button } from '../../base/button.ts';
-import { div, span } from '../../base/index.ts';
-import { svg } from '../../base/svg-element.ts';
+import { Button, div, span, svg } from '@components';
 import styles from '../track.module.scss';
 import { ButtonIconId, ICONS_FILE_PATH } from './create-view.constants.ts';
-import type { ButtonsMap } from './create-view.types.ts';
+import type { ButtonMap } from './create-view.types.ts';
 
 const createButtonsWrapper = (): {
-  buttonsMap: ButtonsMap;
+  buttonsMap: ButtonMap;
   buttonsWrapper: ReturnType<typeof div>;
 } => {
   const buttonsMap: Record<string, Button> = {};
@@ -31,12 +29,12 @@ const createButtonsWrapper = (): {
 
   return {
     buttonsWrapper,
-    buttonsMap: buttonsMap as ButtonsMap,
+    buttonsMap: buttonsMap as ButtonMap,
   };
 };
 
 export const createView = (): {
-  buttonsMap: ButtonsMap;
+  buttonsMap: ButtonMap;
   carName: ReturnType<typeof span>;
   headerWrapper: ReturnType<typeof div>;
   overlay: ReturnType<typeof div>;
