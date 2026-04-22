@@ -16,10 +16,10 @@ const createButtonsWrapper = (): {
     const icon = svg(null, { href: `${ICONS_FILE_PATH}#${iconId}` });
 
     const button = new Button({ className: styles.button, title: name, id: name });
-    if (name === ButtonIconId.start) {
+    if (iconId === ButtonIconId.start) {
       button.toggleClass(styles.start);
     }
-    if (name === ButtonIconId.stop) {
+    if (iconId === ButtonIconId.stop) {
       button.toggleClass(styles.stop);
     }
     button.node.append(icon.node);
