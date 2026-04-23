@@ -10,7 +10,7 @@ npm i
 
 #### 2. Run server
 
-**NOTE:** The default port is 3000. Don't change it -- frontend deployment is tied to it!
+**NOTE:** The default port is **3000**. Don't change it -- frontend deployment is tied to it!
 
 ```sh
 npm start
