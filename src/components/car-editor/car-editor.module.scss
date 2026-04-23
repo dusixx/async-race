@@ -1,0 +1,102 @@
+.editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+
+  width: 100%;
+  margin-bottom: 10px;
+
+  svg {
+    width: 200px;
+  }
+}
+
+.heading {
+  display: flex;
+  justify-content: center;
+
+  width: 100%;
+  padding: 5px;
+  padding-top: 8px;
+  border-radius: var(--border-radius);
+
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  background-color: rgb(238 238 238);
+}
+
+.car-view {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.inputs-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.name-input {
+  @extend %text-input;
+
+  width: 100%;
+  padding-left: 10px;
+}
+
+.color-input {
+  cursor: pointer;
+  height: 40px;
+  border: none;
+}
+
+.field-wrapper {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.name-input-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.group-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.type-select {
+  @extend %text-input;
+
+  display: flex;
+  min-width: 120px;
+  appearance: unset;
+}
+
+.label {
+  font-size: 14px;
+  text-transform: capitalize;
+  opacity: 0.5;
+}
+
+.random-name {
+  @extend %btn-primary;
+
+  aspect-ratio: 1;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+
+  font-size: 18px;
+
+  background-color: #ddd;
+}

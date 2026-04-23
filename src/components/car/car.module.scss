@@ -1,0 +1,12 @@
+.wrapper {
+  width: max-content;
+}
+
+.car-image {
+  width: var(--car-width);
+}
+
+.wheel {
+  transform-origin: center;
+  transform-box: fill-box;
+}

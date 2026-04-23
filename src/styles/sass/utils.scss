@@ -1,0 +1,130 @@
+@mixin hidden($flag: true) {
+  @if $flag == true {
+    pointer-events: none;
+    visibility: hidden;
+  } @else if $flag == false {
+    pointer-events: all;
+    visibility: visible;
+  }
+  @content;
+}
+
+@mixin non-interactive() {
+  pointer-events: none;
+  user-select: none;
+  @content;
+}
+
+@mixin main-transition($props: 'all') {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 250ms;
+  transition-property: #{$props};
+}
+
+// placeholders
+
+%wrapper {
+  position: relative;
+
+  overflow: hidden;
+
+  min-width: var(--wrapper-min-width);
+  max-width: var(--wrapper-max-width);
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+%underline {
+  &::after {
+    content: '';
+
+    position: absolute;
+    bottom: 0;
+
+    display: flex;
+
+    width: 100%;
+    height: 15px;
+
+    background-color: var(--color-bg-sec);
+  }
+}
+
+%btn {
+  cursor: pointer;
+  user-select: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-style: none;
+
+  font-family: inherit;
+}
+
+%btn-primary {
+  @extend %btn;
+
+  padding: 10px 25px;
+  border-radius: var(--border-radius);
+
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--color-btn);
+  text-transform: capitalize;
+
+  background-color: var(--color-btn-bg);
+
+  &:disabled {
+    @include non-interactive {
+      opacity: 0.15;
+      filter: grayscale(1);
+      box-shadow: inset 0 0.5px 0.5px 0.5px rgb(35 35 35);
+    }
+  }
+}
+
+%text-input {
+  display: flex;
+  align-items: center;
+
+  padding: 8px;
+  padding-left: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text);
+
+  appearance: unset;
+  background-color: var(--color-bg-sec-60);
+  outline: none;
+
+  &:focus-visible {
+    border: 1px solid var(--color-border-active);
+  }
+}
+
+%section-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+}
+
+%section-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+
+  padding: 40px 0;
+  padding-bottom: 30px;
+  border-radius: 40px;
+}

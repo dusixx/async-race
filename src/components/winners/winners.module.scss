@@ -1,0 +1,109 @@
+$border-radius: 20px;
+$car-width: 100px;
+
+.wrapper {
+  @extend %wrapper;
+
+  max-width: 900px;
+}
+
+.header-row,
+.table-row {
+  overflow: hidden;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  width: 100%;
+  border-radius: 30px;
+
+  font-size: 14px;
+  text-transform: capitalize;
+
+  @media (width < 600px) {
+    font-size: 12px;
+  }
+}
+
+.table-row {
+  height: 70px;
+
+  svg {
+    width: $car-width;
+
+    @media (width < 600px) {
+      width: calc($car-width - 20px);
+    }
+  }
+}
+
+.sortable-column {
+  cursor: pointer;
+  user-select: none;
+  gap: 6px;
+}
+
+.table-column,
+.sortable-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20%;
+  height: 100%;
+  padding: 2px;
+
+  text-align: center;
+}
+
+.index-column {
+  width: 10%;
+}
+
+.header-row {
+  height: 50px;
+  margin-bottom: 20px;
+  font-weight: bold;
+
+  .table-column {
+    background-color: rgb(241 241 241);
+  }
+}
+
+.name-column {
+  width: 50%;
+}
+
+.table-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+
+  padding: 40px;
+  border-radius: $border-radius;
+
+  background-color: white;
+}
+
+.winners-counter-wrapper {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.winners-counter {
+  font-weight: bold;
+}
+
+.header {
+  @extend %section-header;
+}

@@ -1,0 +1,118 @@
+import type { Button } from '@components';
+import { Element } from '@components';
+import { createView } from './create-view/create-view.ts';
+import {
+  MIN_ITEMS_PER_PAGE,
+  MIN_TOTAL_ITEMS,
+  PAGES_PER_CLICK,
+  START_PAGE_NUMBER,
+} from './paginator.constants.ts';
+import styles from './paginator.module.scss';
+
+type OnChangeHandler = ((newPage: number) => void) | null;
+
+export class Paginator extends Element<HTMLDivElement> {
+  public onChange: OnChangeHandler = null;
+  private next: Button;
+  private previous: Button;
+  private totalPagesRef: Element<HTMLSpanElement>;
+  private currentPageRef: Element<HTMLSpanElement>;
+  private _currentPage: number = START_PAGE_NUMBER;
+  private _totalItems: number = MIN_TOTAL_ITEMS;
+  private _itemsPerPage: number = MIN_ITEMS_PER_PAGE;
+
+  constructor() {
+    super({ className: styles.wrapper });
+
+    const { buttonNext, buttonPrevious, currentPage, totalPages, counterWrapper } = createView();
+
+    this.totalPagesRef = totalPages;
+    this.currentPageRef = currentPage;
+    this.next = buttonNext;
+    this.previous = buttonPrevious;
+
+    this.append(buttonPrevious, counterWrapper, buttonNext);
+    this.init();
+  }
+
+  public get totalPages(): number {
+    return Math.ceil(this._totalItems / this._itemsPerPage);
+  }
+
+  public get currentPage(): number {
+    return this._currentPage;
+  }
+
+  public set currentPage(value: number) {
+    value = Math.ceil(Math.max(value, START_PAGE_NUMBER));
+    this._currentPage = Math.min(value, this.totalPages);
+    this.update();
+  }
+
+  public set itemsPerPage(value: number) {
+    value = Math.ceil(Math.max(value, MIN_ITEMS_PER_PAGE));
+    this._itemsPerPage = value;
+
+    this._currentPage = Math.min(this._currentPage, this.totalPages);
+    this.update();
+  }
+
+  public set totalItems(value: number) {
+    value = Math.ceil(Math.max(value, MIN_TOTAL_ITEMS));
+
+    this._totalItems = value;
+    this.totalPagesRef.text = this.totalPages.toString();
+
+    this._currentPage = Math.min(this._currentPage, this.totalPages);
+    this.update();
+  }
+
+  public set disabled(flag: boolean) {
+    if (flag) {
+      this.next.disabled = flag;
+      this.previous.disabled = flag;
+    } else {
+      this.update();
+    }
+  }
+
+  private updateCurrentPageView(): void {
+    const currentPageNumber = this.currentPageRef.text;
+    const newPageNumber = this._currentPage.toString();
+
+    if (currentPageNumber !== newPageNumber) {
+      this.currentPageRef.text = this._currentPage.toString();
+      this.onChange?.(Number(newPageNumber));
+    }
+  }
+
+  private update(): void {
+    const { next, previous } = this;
+    previous.disabled = this._currentPage === START_PAGE_NUMBER;
+    next.disabled = this._currentPage === this.totalPages;
+    this.updateCurrentPageView();
+  }
+
+  private addNextClickHandler(): void {
+    const { next } = this;
+    next.onClick = (): void => {
+      this._currentPage = Math.min(this._currentPage + PAGES_PER_CLICK, this.totalPages);
+      this.update();
+    };
+  }
+
+  private addPrevClickHandler(): void {
+    const { previous } = this;
+    previous.onClick = (): void => {
+      this._currentPage = Math.max(this._currentPage - PAGES_PER_CLICK, START_PAGE_NUMBER);
+      this.update();
+    };
+  }
+
+  private init(): void {
+    this.previous.disabled = true;
+    this.next.disabled = true;
+    this.addNextClickHandler();
+    this.addPrevClickHandler();
+  }
+}

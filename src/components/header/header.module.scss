@@ -1,0 +1,76 @@
+.header {
+  border-bottom: 1px solid rgb(230 230 230);
+  background-color: #fff;
+}
+
+.wrapper {
+  @extend %wrapper;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 18px 0;
+}
+
+.logo {
+  display: flex;
+  height: 34px;
+}
+
+.nav-wrapper {
+  display: flex;
+}
+
+.radio-wrapper {
+  user-select: none;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  margin: 0;
+  appearance: unset;
+
+  /* IOS < 15: remove gradient background */
+  background-color: #fff;
+}
+
+.radio-label-right,
+.radio-label-left {
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+
+  padding: 8px 18px;
+
+  font-size: 11px;
+  color: white;
+  text-transform: capitalize;
+
+  background-color: var(--color-btn-bg);
+}
+
+.radio-label-left {
+  border-top-left-radius: 40px;
+  border-bottom-left-radius: 40px;
+}
+
+.radio-label-right {
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
+}
+
+.input:checked ~ label {
+  color: rgb(143 143 149);
+  background: none;
+  background-color: rgb(240 240 240);
+  box-shadow: inset 0 1px 1px 1px rgb(0 0 0 / 15%);
+
+  @include non-interactive {
+    cursor: default;
+  }
+}

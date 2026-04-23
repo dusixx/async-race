@@ -1,0 +1,65 @@
+body {
+  overflow-y: scroll;
+
+  margin: 0;
+
+  font-family: Comfortaa, sans-serif;
+  color: var(--color-text);
+
+  background-color: var(--color-bg);
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+input[type='number'] {
+  appearance: textfield;
+}
+
+p,
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+:root {
+  --color-text: rgb(53 53 53);
+  --color-bg: rgb(245 245 245);
+  --color-bg-sec: rgb(232 233 238);
+  --color-bg-sec-60: rgb(232 233 238 / 60%);
+  --color-modal-bg: rgb(246 246 246);
+  --color-accent: #eb004a;
+  --color-accent-20: rgb(206 20 104 / 20%);
+  --color-invalid-bg: rgb(255 243 248);
+  --color-backdrop-bg: rgb(120 120 120 / 80%);
+  --color-btn-bg: #005aea;
+  --color-btn-bg-sec: #59ac00;
+  --color-btn: white;
+  --color-border: rgb(202 202 202);
+  --color-border-active: rgb(78 158 255);
+  --color-picked-option-bg: #e6f9d3;
+  --box-shadow: 0 1px 1px 1px rgb(203 203 203/70%);
+  --border-radius: 40px;
+  --border-radius-sm: 2px;
+  --max-width: 1280px;
+  --wrapper-max-width: 1280px;
+  --wrapper-min-width: 450px;
+  --backdrop-zindex: 1000;
+
+  // car and track
+  --car-width: 150px;
+  --car-bottom: 7px;
+  --track-height: 170px;
+  --track-header-padding: 4px;
+  --track-header-padding-left: 5px;
+  --track-button-width: 27px;
+  --track-buttons-gap: 8px;
+  --tracks-gap: 22px;
+}

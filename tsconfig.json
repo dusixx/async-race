@@ -1,0 +1,61 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@components": ["src/components"],
+      "@common/*": ["src/common/*"],
+      "@common": ["src/common"],
+      "@app/*": ["src/app/*"],
+      "@app": ["src/app"],
+      "@services/*": ["src/services/*"],
+      "@services": ["src/services"],
+      "@styles/*": ["src/styles/*"],
+      "@styles": ["src/styles"],
+      "@router/*": ["src/router/*"],
+      "@router": ["src/router"],
+      "@data/*": ["src/data/*"],
+      "@data": ["src/data"]
+    }
+  },
+  "include": [
+    "src",
+    "*.js",
+    "*.ts",
+    "eslint.config.mjs",
+    "vite.config.mts",
+    "commitlint.config.mjs"
+  ],
+  "exclude": ["src/backup/*.*"]
+}

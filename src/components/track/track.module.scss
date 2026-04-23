@@ -1,0 +1,165 @@
+$finish-image-url: './finish-2.png';
+$landscape-image-url: './landscape.png';
+
+.track {
+  position: relative;
+
+  overflow: hidden;
+  display: flex;
+
+  height: var(--track-height);
+  border-radius: 20px;
+
+  background:
+    url($finish-image-url) right 20px bottom 35px,
+    url($landscape-image-url);
+  background-color: rgb(255 255 255);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 270px, cover;
+}
+
+.car-position {
+  position: absolute;
+  bottom: var(--car-bottom);
+  left: var(--car-left);
+}
+
+.button {
+  @extend %btn-primary;
+
+  aspect-ratio: 1;
+  width: var(--track-button-width);
+  padding: 0;
+  border-radius: 50%;
+
+  svg {
+    aspect-ratio: 1;
+    width: 15px;
+    fill: currentcolor;
+  }
+}
+
+.start {
+  background-color: var(--color-accent);
+}
+
+.stop {
+  display: flex;
+}
+
+.update {
+  background-color: var(--color-btn-bg-sec);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--track-buttons-gap);
+}
+
+.car-name {
+  display: flex;
+  font-size: 12px;
+  color: rgb(19 19 19 / 90%);
+}
+
+.header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  height: fit-content;
+  margin-top: 12px;
+  margin-left: 15px;
+  padding: var(--track-header-padding);
+  padding-right: 10px;
+  padding-left: var(--track-header-padding-left);
+  border-radius: var(--border-radius);
+
+  background-color: white;
+
+  @media (width <= 600px) {
+    transform: scale(0.9);
+    margin: 0;
+  }
+}
+
+.overlay {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 80%;
+
+  @include hidden(true) {
+    pointer-events: none;
+    opacity: 0;
+  }
+  @include main-transition('opacity, visibility');
+}
+
+.status-info {
+  transform: scale(0.6);
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0.5;
+
+  @include main-transition('transform');
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  aspect-ratio: 1;
+  width: 30px;
+  border-radius: 100%;
+
+  font-size: 16px;
+  color: white;
+
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+.status-text {
+  padding: 3px 6px;
+  border-radius: 40px;
+
+  font-size: 12px;
+  text-transform: lowercase;
+
+  background-color: rgb(255 255 255 / 80%);
+}
+
+.active {
+  .status-info {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  @include hidden(false) {
+    pointer-events: none;
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.2);
+  }
+}
