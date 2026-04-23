@@ -8,6 +8,5 @@ export * from './car-editor/car-editor.ts';
 export * from './car/car.ts';
 export * from './garage/garage.ts';
 export * from './header/header.ts';
-export * from './main/main.ts';
 export * from './track/track.ts';
 export * from './winners/winners.ts';

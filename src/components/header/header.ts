@@ -4,7 +4,7 @@ import styles from './header.module.scss';
 
 export type NavSectionName = 'garage' | 'winners';
 
-export class HeaderSection extends Element {
+export class Header extends Element {
   public onNavigate: ((sectionName: NavSectionName) => void) | null = null;
   private garageInput: Element<HTMLInputElement>;
   private winnersInput: Element<HTMLInputElement>;

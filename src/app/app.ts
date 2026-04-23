@@ -1,11 +1,11 @@
 import { EventName } from '@common';
 import type { NavSectionName } from '@components';
-import { Garage, HeaderSection, main as MainSection, Winners } from '@components';
+import { Garage, Header, main as Main, Winners } from '@components';
 
-const header = new HeaderSection();
+const header = new Header();
 const garage = new Garage();
 const winners = new Winners();
-const main = MainSection({}, garage);
+const main = Main({}, garage);
 
 header.onNavigate = (sectionName: NavSectionName): void => {
   main.dispatch(EventName.BeforeContentChange);
